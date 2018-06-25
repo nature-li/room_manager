@@ -746,8 +746,10 @@ class RoomList(BaseHandler):
 
 class Captcha(tornado.web.RequestHandler):
     def post(self):
-        image = ImageCaptcha(fonts=['/Users/liyanguo/cluster/centos/work/room_manager/src/static/fonts/DroidSansMono.ttf'])
-        data = image.generate('abde123')
+        image = ImageCaptcha(width=120, height=40,
+                             fonts=['/Users/liyanguo/cluster/centos/work/room_manager/src/static/fonts/DroidSansMono.ttf'],
+                             font_sizes=(34, 38, 29))
+        data = image.generate('abd3')
         a_dict = dict()
         a_dict['success'] = True
         a_dict['value'] = base64.b64encode(data.getvalue())
