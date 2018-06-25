@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {%block header%}
+    {%end%}
+</head>
+<body>
+
+<div id="wrapper" class="{%if login_user.pin_nav == 1%}toggled{%end%}">
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand">
+                <span style="float: left;">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-menu-hamburger side-bar-hidden" style="display: inline" aria-hidden="true">
+                        </span>
+                    </a>
+                </span>
+                <span style="float: right">
+                    <a href="#">
+                        <span id="lock-side-bar"
+                              class="glyphicon {%if login_user.pin_lock == 1%}glyphicon-lock{%else%}glyphicon-pushpin{%end%}"
+                              style="margin-right: 20px" aria-hidden="true">
+                        </span>
+                    </a>
+                </span>
+            </li>
+            {% if login_user.user_right & 0B001 != 0 %}
+            <li id="user_list_menu" class="side-bar-condition-hidden side-bar-menu {%block user_list_menu%}{%end%}">
+                <a href="#">权限管理</a>
+            </li>
+            {% end %}
+
+            {% if login_user.user_right & 0B010 != 0 %}
+            <li id="machine_list_menu" class="side-bar-condition-hidden side-bar-menu {%block machine_list_menu%}{%end%}">
+                <a href="#">机器列表</a>
+            </li>
+            {% end %}
+
+            <li id="service_list_menu" class="side-bar-condition-hidden side-bar-menu {%block monitor_list_menu%}{%end%}">
+                <a href="#">节点监测</a>
+            </li>
+
+            {% if login_user.user_right & 0B100 != 0 %}
+            <li id="start_history_menu" class="side-bar-condition-hidden side-bar-menu {%block start_history_menu%}{%end%}">
+                <a href="#">操作记录</a>
+            </li>
+            {% end %}
+        </ul>
+    </div>
+
+    {% block body_navigate %}
+    {% end %}
+
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            {% block body_content %}
+            {% end %}
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/private/public.js"></script>
+<script src="/static/js/private/toggle_sidebar.js"></script>
+<script src="/static/js/private/page_partition.js"></script>
+
+{% block body_tail %}
+{% end %}
+</body>
+</html>

@@ -1,0 +1,192 @@
+{% extends '../nav_base.html' %}
+
+{% block header %}
+<title>节点监测</title>
+<!-- Bootstrap Core CSS -->
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/bootstrap-dialog/bootstrap-dialog.min.css" rel="stylesheet">
+
+<!-- Custom CSS -->
+<link href="/static/css/private/left/simple-sidebar.css" rel="stylesheet">
+<link href="/static/css/private/left/align.css" rel="stylesheet">
+<link href="/static/css/private/pages/monitor.css" rel="stylesheet">
+<link href="/static/css/bootstrap-select/bootstrap-select.css" rel="stylesheet">
+
+<!-- Bootstrap Core JS -->
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/jquery.cookie.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/bootstrap-select/bootstrap-select.js"></script>
+<script src="/static/js/bootstrap-dialog/bootstrap-dialog.min.js"></script>
+{% end %}
+
+{% block monitor_list_menu %}
+chosen-menu
+{% end %}
+
+{% block body_navigate %}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a id="expand-side-bar"
+               class="navbar-brand side-bar-show {% if login_user.pin_nav == 1 %}hidden-self{% end %}" href="#">
+                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+            </a>
+            <span class="navbar-brand">节点监测</span>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/monitor_list">监测列表</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">增加监测</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">{{ login_user.user_name }}<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/logout">退出</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% end %}
+
+
+{% block body_content %}
+
+<div class="form-group">
+    <div class="form-box">
+        <div class="form-group">
+            <div class="form-group col-xs-12">
+                <label class="form-check-label" for="is_active">启动监测</label>
+                <input type="checkbox" class="form-check-input form_change" id="is_active" checked>
+                <hr/>
+            </div>
+            <div class="form-group col-xs-6">
+                <label>服务名称:<span style="color: red;">*</span></label>
+                <div>
+                    <input id="service_name" type="text" maxlength="64" class="form-control form_change"
+                           placeholder="请输入服务名称"/>
+                </div>
+            </div>
+            <div class="form-group col-xs-6">
+                <label>管理账号<span style="color: red;">*</span></label>
+                <div>
+                    <select id="service_manager_select" class="selectpicker form-control form_change" data-size="10"
+                            data-live-search="true">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-xs-6">
+                <label>报警邮箱<span style="color: red;">*</span></label>
+                <div>
+                    <input id="mail_receiver" type="text" class="form-control form_change"
+                           placeholder="请输入接受报警的邮箱，多个邮箱用英文逗号隔开"/>
+                </div>
+            </div>
+            <div class="form-group col-xs-6">
+                <label>依赖服务:</label>
+                <div>
+                    <select id="rely_service_select" class="selectpicker form-control form_change" data-size="10"
+                            data-live-search="true" multiple>
+                    </select>
+                </div>
+            </div>
+            <div id="input_for_start_cmd" class="form-group col-xs-6">
+                <label>启动命令(非阻塞命令)<span id="star_for_start_cmd" class="red_label hidden-self">*</span></label>
+                <div>
+                    <textarea id="start_cmd" maxlength="4096" class="form-control form_change"
+                              placeholder="请输入服务启动命令"></textarea>
+                </div>
+            </div>
+            <div id="input_for_stop_cmd" class="form-group col-xs-6">
+                <label>停止命令(非阻塞命令)<span id="star_for_stop_cmd" class="red_label hidden-self">*</span></label>
+                <div>
+                    <textarea id="stop_cmd" maxlength="4096" class="form-control form_change"
+                              placeholder="请输入服务停止命令"></textarea>
+                </div>
+            </div>
+            <div id="input_for_restart_cmd" class="form-group col-xs-6">
+                <label>重启命令(非阻塞命令)<span id="star_for_restart_cmd" class="red_label hidden-self">*</span></label>
+                <div>
+                    <textarea id="restart_cmd" maxlength="4096" class="form-control form_change"
+                              placeholder="请输入服务重启命令"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-box col-xs-12">
+    <hr/>
+    <label class="title">判断健康条件（不满足时发送邮件报警）:</label>
+    <div class="box">
+        <table id="tbl_body_healthy" class="table table-bordered table-hover healthy_check_table">
+            <thead>
+            <tr>
+                <td style="text-align: center">ID</td>
+                <th width="60%">执行命令</th>
+                <th style="text-align: center">监测服务器执行</th>
+                <th style="text-align: center">判断条件</th>
+                <th style="text-align: center">值</th>
+                <th style="text-align: center; white-space: nowrap">编辑</th>
+                <th style="text-align: center; white-space: nowrap">删除</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <button id="btn_add_healthy_check" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign"></span>
+        </button>
+    </div>
+    <hr/>
+    <label class="title">判断健康条件（不满足时需重启服务）:</label>
+    <input type="checkbox" class="form-check-input form_change" style="margin: 0 0 0 15px" id="auto_recover">
+    <label class="form-check-label" for="auto_recover">自动重启</label>
+    <div class="box">
+        <table id="tbl_body_unhealthy" class="table table-bordered table-hover unhealthy_check_table">
+            <thead>
+            <tr>
+                <td style="text-align: center">ID</td>
+                <th width="60%">执行命令</th>
+                <th style="text-align: center">监测服务器执行</th>
+                <th style="text-align: center">判断条件</th>
+                <th style="text-align: center">值</th>
+                <th style="text-align: center; white-space: nowrap">编辑</th>
+                <th style="text-align: center; white-space: nowrap">删除</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <button id="btn_add_unhealthy_check" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign"></span>
+        </button>
+    </div>
+    <div style="text-align: center" class="row">
+        <button id='btn_submit' type="button" class="btn btn-primary">提交</button>
+        <button id='btn_cancel_submit' type="button" class="btn btn-primary">放弃</button>
+    </div>
+</div>
+{% end %}
+
+
+{% block body_tail %}
+<script src="/static/js/private/public.js"></script>
+<script src="/static/js/private/pages/page_detail.js"></script>
+<script src="/static/js/private/pages/add_monitor.js"></script>
+{% end %}

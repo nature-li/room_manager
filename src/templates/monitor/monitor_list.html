@@ -1,0 +1,107 @@
+{% extends '../nav_base.html' %}
+
+{% block header %}
+<title>节点监测</title>
+<!-- Bootstrap Core CSS -->
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/bootstrap-dialog/bootstrap-dialog.min.css" rel="stylesheet">
+
+<!-- Custom CSS -->
+<link href="/static/css/private/left/simple-sidebar.css" rel="stylesheet">
+<link href="/static/css/private/left/align.css" rel="stylesheet">
+<link href="/static/css/private/pages/file_list_page.css" rel="stylesheet">
+
+<!-- Bootstrap Core JS -->
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/jquery.cookie.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/bootstrap-select/bootstrap-select.js"></script>
+<script src="/static/js/bootstrap-dialog/bootstrap-dialog.min.js"></script>
+{% end %}
+
+{%block monitor_list_menu%}
+chosen-menu
+{%end%}
+
+{% block body_navigate %}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a id="expand-side-bar" class="navbar-brand side-bar-show {%if login_user.pin_nav == 1%}hidden-self{%end%}" href="#">
+                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+            </a>
+            <span class="navbar-brand">节点监测</span>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/monitor_list">监测列表</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">{{ login_user.user_name }}<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/logout">退出</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <form class="navbar-form navbar-right" style="width: 400px">
+                <div>
+
+                </div>
+                <div class="form-group" style="width: 80%">
+                    <input id="search_service_name" type="text" class="form-control" placeholder="搜索服务名"
+                           style="width: 100%">
+                </div>
+                <button id="search_user_name_btn" type="button" class="btn btn-default">搜索</button>
+            </form>
+        </div>
+    </div>
+</nav>
+{% end %}
+
+
+{% block body_content %}
+<table id="service_list_result" class="table table-striped table-bordered table-hover">
+    <thead>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+{% if login_user.user_right & 0B010 != 0 %}
+<button id="add_service_button" type="button" class="btn btn-primary" style="margin: 0 30px 0 0;">增加监测</button>
+{% end %}
+
+{% if login_user.user_right & 0B100 != 0%}
+<button id="batch_start_button" type="button" class="btn btn-primary">启动服务</button>
+<button id="batch_stop_button" type="button" class="btn btn-primary">关闭服务</button>
+<button id="batch_restart_button" type="button" class="btn btn-primary">重启服务</button>
+{% end %}
+
+<div style="text-align: right">
+    <span id="data_count_tip" style="margin-right: 15px;"></span>
+</div>
+
+<div style="text-align: right">
+    <ul id="page_partition_id" class="pagination"></ul>
+</div>
+{% end %}
+
+
+{% block body_tail %}
+<script src="/static/js/private/pages/monitor_list.js"></script>
+{% end %}

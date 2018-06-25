@@ -1,0 +1,44 @@
+.box {
+    margin: 5px 0 50px 0;
+}
+
+.form-box {
+    /*margin: 5px 0 5px 0;*/
+    /*border: 1px solid #337ab7;*/
+    /*padding: 30px;*/
+    /*border-radius: 8px;*/
+}
+
+.title {
+    color: #2e6da4;
+}
+
+.tree_value {
+    margin: auto auto auto 30px;
+}
+
+.form_change {
+
+}
+
+.healthy_check_table {
+
+}
+
+.unhealthy_check_table{
+
+}
+
+.red_label {
+    color: #FF0000;
+}
+
+.edit_id_input {
+    height: 24px;
+    width: 120px;
+    border-radius: 4px;
+    padding: 0 12px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    line-height: 1.42857143;
+}

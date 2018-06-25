@@ -1,0 +1,130 @@
+{% extends '../nav_base.html' %}
+
+{% block header %}
+<title>操作记录</title>
+<!-- Bootstrap Core CSS -->
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/bootstrap-dialog/bootstrap-dialog.min.css" rel="stylesheet">
+<link href="/static/css/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
+<!-- Custom CSS -->
+<link href="/static/css/private/left/simple-sidebar.css" rel="stylesheet">
+<link href="/static/css/private/left/align.css" rel="stylesheet">
+
+<!-- Bootstrap Core JS -->
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/jquery.cookie.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/bootstrap-select/bootstrap-select.js"></script>
+<script src="/static/js/bootstrap-dialog/bootstrap-dialog.min.js"></script>
+<script src="/static/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+<script src="/static/js/bootstrap-datetimepicker/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/static/js/moment/moment-with-locales.js"></script>
+{% end %}
+
+{% block start_history_menu %}
+chosen-menu
+{% end %}
+
+{% block body_navigate %}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a id="expand-side-bar" class="navbar-brand side-bar-show {% if login_user.pin_nav == 1 %}hidden-self{% end %}" href="#">
+                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+            </a>
+            <span class="navbar-brand">启停记录</span>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">{{ login_user.user_name }}<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/logout">退出</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <form class="navbar-form navbar-right" style="width: 350px">
+                <div class="form-group" style="width: 80%">
+                    <input id="search_machine" class="form-control" placeholder="搜索操作账号"
+                           style="width: 100%">
+                </div>
+                <button id="search_user_email" type="button" class="btn btn-default">查询</button>
+            </form>
+
+            <form class="navbar-form navbar-right" style="width: 300px">
+                <div class="form-group" style="width: 100%">
+                    <label class="control-label">结束时间:</label>
+                    <div id="end_datetime" class="input-group date">
+                        <input id="end_datetime_value" class="form-control" size="16" value="" readonly>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                    </div>
+                </div>
+            </form>
+
+            <form class="navbar-form navbar-right" style="width: 300px">
+                <div class="form-group" style="width: 100%">
+                    <label class="control-label">开始时间:</label>
+                    <div id="start_datetime" class="input-group date">
+                        <input id="start_datetime_value" class="form-control" size="16" value="" readonly>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</nav>
+{% end %}
+
+
+{% block body_content %}
+<table id="start_history_result" class="table table-striped table-bordered table-hover">
+    <thead>
+    <tr>
+        <th class="td-middle">ID</th>
+        <th class="td-middle">操作账号</th>
+        <th class="td-middle">服务名称</th>
+        <th class="td-middle">SSH账号</th>
+        <th class="td-middle">SSH地址</th>
+        <th class="td-middle">输入命令</th>
+        <th class="td-middle">标准输出</th>
+        <th class="td-middle">错误输出</th>
+        <th class="td-middle">操作时间</th>
+        <th class="td-middle">执行时间</th>
+        <th class="td-middle">完成时间</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<button id='btn_back_home' type="button" class="btn btn-primary">返回节点监测</button>
+
+<div style="text-align: right">
+    <span id="data_count_tip" style="margin-right: 15px;"></span>
+</div>
+
+<div style="text-align: right">
+    <ul id="page_partition_id" class="pagination"></ul>
+</div>
+
+
+{% end %}
+
+{% block body_tail %}
+<script src="/static/js/private/pages/start_history.js"></script>
+{% end %}
