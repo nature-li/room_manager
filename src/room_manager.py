@@ -18,6 +18,9 @@ import requests
 import setproctitle
 from tornado import httpserver
 import base64
+import random
+import datetime
+import hashlib
 from captcha.image import ImageCaptcha
 
 from config.config import Config
@@ -232,9 +235,11 @@ class AddUserHandler(BaseHandler):
         if not login_user.user_right & UserRight.USER_MANAGER:
             self.redirect("/")
             return
+        user_name = self.get_argument("user_name")
         user_email = self.get_argument("user_email")
+        user_pwd = self.get_argument("user_pwd")
         user_right = self.get_argument("user_right")
-        text = DbOperator.add_one_user(user_email, user_right)
+        text = DbOperator.add_one_user(user_name, user_email, user_pwd, user_right)
         self.write(text)
 
 
@@ -247,11 +252,85 @@ class QueryUserListHandler(BaseHandler):
         if not login_user.user_right & UserRight.USER_MANAGER:
             self.redirect("/")
             return
-        user_email = self.get_argument("user_email")
+        user_name = self.get_argument("user_name")
         off_set = self.get_argument("off_set")
         limit = self.get_argument("limit")
-        text = DbOperator.query_user_list(user_email, off_set, limit)
+        text = DbOperator.query_user_list(user_name, off_set, limit)
         self.write(text)
+
+
+class PersonalHandler(BaseHandler):
+    def get(self):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
+        self.render('user/personal.html', login_user=login_user)
+
+
+class GetUserCount(BaseHandler):
+    def post(self):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
+        user_name = self.get_argument('user_name')
+        user_count = DbOperator.get_user_count(user_name)
+        a_dict = dict()
+        if user_count is not None:
+            a_dict['code'] = 0
+            a_dict['msg'] = 'OK'
+            a_dict['count'] = user_count
+        else:
+            a_dict['code'] = 1
+            a_dict['msg'] = 'Internal error'
+            a_dict['count'] = -1
+        self.write(json.dumps(a_dict, ensure_ascii=False))
+
+
+class ApiChangeUserName(BaseHandler):
+    def post(self):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
+
+        a_dict = dict()
+        user_name = self.get_argument('user_name')
+        if not user_name:
+            a_dict['code'] = 1
+            a_dict['msg'] = 'User name is empty'
+            self.write(json.dumps(a_dict, ensure_ascii=False))
+            return
+        code = DbOperator.change_user_name(login_user.user_email, user_name)
+        if code == 0:
+            self.set_secure_cookie("user_name", user_name, expires_days=None)
+            a_dict['code'] = 0
+            a_dict['msg'] = 'OK'
+        else:
+            a_dict['code'] = 2
+            a_dict['msg'] = 'Internal error'
+        self.write(json.dumps(a_dict, ensure_ascii=False))
+
+
+
+class ApiChangeUserPwd(BaseHandler):
+    def post(self):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        a_dict = dict()
+        old_pwd = self.get_argument('old_pwd')
+        new_pwd = self.get_argument('new_pwd')
+        if not new_pwd:
+            a_dict['code'] = 1
+            a_dict['msg'] = 'New password is empty'
+            self.write(json.dumps(a_dict, ensure_ascii=False))
+            return
+        code, msg = DbOperator.change_user_pwd(login_user.user_email, old_pwd, new_pwd)
+        a_dict['code'] = code
+        a_dict['msg'] = msg
+        self.write(json.dumps(a_dict, ensure_ascii=False))
 
 
 class ApiQueryMachineHandler(BaseHandler):
@@ -738,21 +817,72 @@ class LoginHandler(tornado.web.RequestHandler):
     def get(self):
         self.render('login/login.html')
 
+    def post(self):
+        a_dict = dict()
+
+        user_email = self.get_argument('user_email')
+        user_password = self.get_argument('user_password')
+        captcha_value = self.get_argument('captcha_value')
+
+        if not user_email or not user_password or not captcha_value:
+            a_dict['code'] = 1
+            a_dict['msg'] = 'empty input'
+            self.write(json.dumps(a_dict, ensure_ascii=False))
+            return
+
+        if captcha_value != self.get_secure_cookie('captcha_value'):
+            a_dict['code'] = 2
+            a_dict['msg'] = 'captcha error'
+            self.write(json.dumps(a_dict, ensure_ascii=False))
+            return
+
+        user = DbOperator.get_user_info(user_email)
+        if not user:
+            a_dict['code'] = 3
+            a_dict['msg'] = 'no this user'
+            self.write(json.dumps(a_dict, ensure_ascii=False))
+            return
+
+        m = hashlib.md5()
+        m.update(user_password)
+        input_password = m.hexdigest()
+        if input_password != user.user_pwd:
+            a_dict['code'] = 4
+            a_dict['msg'] = 'password error'
+            self.write(json.dumps(a_dict, ensure_ascii=False))
+            return
+
+        self.set_secure_cookie("user_email", user_email, expires_days=None)
+        self.set_secure_cookie("user_name", user.user_name, expires_days=None)
+        self.set_secure_cookie("user_right", str(user.user_right), expires_days=None)
+        self.set_secure_cookie("last_time", str(time.time()), expires_days=None)
+        self.set_cookie("page_right", str(user.user_right), expires_days=None)
+
+        a_dict['code'] = 0
+        a_dict['msg'] = 'ok'
+        self.write(json.dumps(a_dict, ensure_ascii=False))
+
 
 class RoomList(BaseHandler):
     def get(self):
-        self.render('login/login.html')
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        self.render('room/room_list.html', login_user=login_user)
 
 
 class Captcha(tornado.web.RequestHandler):
     def post(self):
-        image = ImageCaptcha(width=120, height=40,
-                             fonts=['/Users/liyanguo/cluster/centos/work/room_manager/src/static/fonts/DroidSansMono.ttf'],
-                             font_sizes=(34, 38, 29))
-        data = image.generate('abd3')
+        chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'k', 'm', 'n', 'p', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                 '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        captcha_value = ''.join(random.sample(population=chars, k=4))
+
+        image = ImageCaptcha(width=100, height=34, font_sizes=(28, 29, 30, 31, 32, 33))
+        png_data = image.generate(captcha_value)
         a_dict = dict()
         a_dict['success'] = True
-        a_dict['value'] = base64.b64encode(data.getvalue())
+        a_dict['value'] = base64.b64encode(png_data.getvalue())
+        self.set_secure_cookie("captcha_value", captcha_value, expires_days=None)
         self.write(json.dumps(a_dict, ensure_ascii=False))
 
 
@@ -814,8 +944,20 @@ def __main__():
 
     app = tornado.web.Application(
         [
-            (r'/', HelloHandler),
+            (r'/', RoomList),
+            (r'/refuse', RefuseHandler),
             (r'/login', LoginHandler),
+            (r'/api_login', LoginHandler),
+            (r'/logout', LogoutHandler),
+            (r'/user_list', UserListHandler),
+            (r'/api_add_user', AddUserHandler),
+            (r'/api_del_user', DeleteUserHandler),
+            (r'/api_edit_user', EditUserHandler),
+            (r'/api_query_user', QueryUserListHandler),
+            (r'/personal', PersonalHandler),
+            (r'/get_user_count', GetUserCount),
+            (r'/api_change_user_name', ApiChangeUserName),
+            (r'/api_change_user_pwd', ApiChangeUserPwd),
             (r'/room_list', RoomList),
             (r'/captcha', Captcha),
         ],
@@ -830,6 +972,8 @@ def __main__():
         'keyfile': '/Users/liyanguo/cluster/centos/work/room_manager/key/ssl.key'
     })
     http_server.listen(443)
+    now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print '%s starting' % now
     tornado.ioloop.IOLoop.current().start()
 
 

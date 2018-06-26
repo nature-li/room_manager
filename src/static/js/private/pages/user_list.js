@@ -32,7 +32,7 @@ function query_and_update_view() {
             url: '/api_query_user',
             type: "post",
             data: {
-                'user_email': $("#search_user_email").val(),
+                'user_name': $("#search_user_name").val(),
                 'off_set': off_set,
                 'limit': limit
             },
@@ -61,7 +61,7 @@ function update_page_view(page_idx) {
     // 添加表格
     for (var i = 0; i < window.save_data.item_list.length; i++) {
         var user = window.save_data.item_list[i];
-        add_row(user.id, user.user_email, user.user_right, user.create_time);
+        add_row(user.id, user.user_name, user.user_email, user.user_right, user.create_time);
     }
 
     // 更新分页标签
@@ -135,29 +135,20 @@ function query_delete_selected_user() {
 $(document).on("click", ".user-edit-button", function () {
     var $tr = $(this).parent().parent();
     var user_id = $tr.find("td:eq(1)").text();
-    var user_email = $tr.find("td:eq(2)").text();
-    var edit_monitor_right_txt = $tr.find("td:eq(3)").html();
-    var restart_right_txt = $tr.find("td:eq(4)").html();
-    var user_right_txt = $tr.find("td:eq(5)").html();
+    var user_name = $tr.find("td:eq(2)").text();
+    var user_email = $tr.find("td:eq(3)").text();
+    var user_right_txt = $tr.find("td:eq(4)").html();
 
     var user_right = 0;
     if (user_right_txt !== '') {
         user_right |= 0B001;
     }
 
-    if (edit_monitor_right_txt !== '') {
-        user_right |= 0B010;
-    }
-
-    if (restart_right_txt !== '') {
-        user_right |= 0B100;
-    }
-
-    show_edit_dialog(user_id, user_email, user_right);
+    show_edit_dialog(user_id, user_name, user_email, user_right);
 });
 
 // 弹出编辑对话框
-function show_edit_dialog(user_id, user_email, user_right) {
+function show_edit_dialog(user_id, user_name, user_email, user_right) {
     BootstrapDialog.show({
         message: function (dialog) {
             // header
@@ -167,28 +158,16 @@ function show_edit_dialog(user_id, user_email, user_right) {
             content += '<div style="display: none"><input id="edit_user_id" type="text" class="form-control" value="' + user_id + '" readonly></div>';
 
             // 账号
-            content += '<div><input id="edit_user_email" type="text" class="form-control" value="' + user_email + '" readonly></div>';
+            content += '<div><input id="edit_user_name" type="text" class="form-control" value="' + user_name + '" readonly></div>';
 
             // 用户权限
             content += '<div class="checkbox">';
             content += '<span style="margin-right: 30px;">用户权限:</span>';
 
-            if ((user_right & 0B010) !== 0) {
-                content += '<label style="margin: 0 10px;"><input id="edit_monitor_right_in_dialog" type="checkbox" name="edit_monitor_right" value="1" checked/>编辑监测</label>';
-            } else {
-                content += '<label style="margin: 0 10px;"><input id="edit_monitor_right_in_dialog" type="checkbox" name="edit_monitor_right" value="0"/>编辑监测</label>';
-            }
-
-            if ((user_right & 0B100) !== 0) {
-                content += '<label style="margin: 0 10px;"><input id="restart_control_in_dialog" type="checkbox" name="restart_right" value="1" checked/>启停服务</label>';
-            } else {
-                content += '<label style="margin: 0 10px;"><input id="restart_control_in_dialog" type="checkbox" name="restart_right" value="0"/>启停服务</label>';
-            }
-
             if ((user_right & 0B001) !== 0) {
-                content += '<label style="margin: 0 10px;"><input id="user_right_in_dialog" type="checkbox" name="user_right" value="1" checked/>权限管理</label>';
+                content += '<label style="margin: 0 10px;"><input id="user_right_in_dialog" type="checkbox" name="user_right" value="1" checked/>用户管理</label>';
             } else {
-                content += '<label style="margin: 0 10px;"><input id="user_right_in_dialog" type="checkbox" name="user_right" value="0"/>权限管理</label>';
+                content += '<label style="margin: 0 10px;"><input id="user_right_in_dialog" type="checkbox" name="user_right" value="0"/>用户管理</label>';
             }
 
             content += '</div>';
@@ -210,14 +189,6 @@ function show_edit_dialog(user_id, user_email, user_right) {
                 var new_user_right = 0;
                 if ($("#user_right_in_dialog").prop('checked')) {
                     new_user_right |= 0B001;
-                }
-
-                if ($('#edit_monitor_right_in_dialog').prop('checked')) {
-                    new_user_right |= 0B010;
-                }
-
-                if ($('#restart_control_in_dialog').prop('checked')) {
-                    new_user_right |= 0B100;
                 }
 
                 // 权限发生变化后发送请求
@@ -271,6 +242,7 @@ function edit_user_page_view(response) {
 
     var user = response.content[0];
     var user_id = user.id;
+    var user_name = user.user_name;
     var user_email = user.user_email;
     var user_right = user.user_right;
     var create_time = user.create_time;
@@ -281,15 +253,12 @@ function edit_user_page_view(response) {
 
         if (bind_user_id === user_id.toString()) {
             var user_control = get_img_by_user_right(user_right, 0B001);
-            var edit_monitor_right = get_img_by_user_right(user_right, 0B010);
-            var restart_right = get_img_by_user_right(user_right, 0B100);
 
             $(this).find("td:eq(1)").html(user_id);
-            $(this).find("td:eq(2)").html(user_email);
-            $(this).find("td:eq(3)").html(edit_monitor_right);
-            $(this).find("td:eq(4)").html(restart_right);
-            $(this).find("td:eq(5)").html(user_control);
-            $(this).find("td:eq(6)").html(create_time);
+            $(this).find("td:eq(2)").html(user_name);
+            $(this).find("td:eq(3)").html(user_email);
+            $(this).find("td:eq(4)").html(user_control);
+            $(this).find("td:eq(5)").html(create_time);
         }
     });
 }
@@ -299,17 +268,19 @@ $("#add_user_button").click(function () {
     BootstrapDialog.show({
         message: function (dialog) {
             // header
-            var content = '<div>';
+            var content = '<div class="form-horizontal">';
 
-            // 账号
-            content += '<div><input id="add_user_email" type="text" class="form-control" placeholder="输入账号"></div>';
+            // user_name
+            content += '<div class="form-group"><div class="col-xs-12"><input id="add_user_name" class="form-control" placeholder="输入昵称"></div></div>';
+            // user_email
+            content += '<div class="form-group"><div class="col-xs-12"><input id="add_user_email" class="form-control" placeholder="输入邮箱"></div></div>';
+            // user_pwd
+            content += '<div class="form-group"><div class="col-xs-12"><input id="add_user_pwd" type="password" class="form-control" placeholder="输入密码"></div></div>';
 
-            // 权限
+            // user_right
             content += '<div class="checkbox">';
             content += '<span style="margin-right: 30px;">权限:</span>';
-            content += '<label style="margin: 0 10px;"><input id="edit_monitor_in_dialog" type="checkbox" name="edit_monitor_right[]" value="0" />编辑监测</label>';
-            content += '<label style="margin: 0 10px;"><input id="restart_control_in_dialog" type="checkbox" name="restart_right[]" value="0" />启停服务</label>';
-            content += '<label style="margin: 0 10px;"><input id="manager_control_in_dialog" type="checkbox" name="user_right[]" value="0" />权限管理</label>';
+            content += '<label style="margin: 0 10px;"><input id="manager_control_in_dialog" type="checkbox" name="user_right[]" value="0" />用户管理</label>';
             content += '</div>';
 
             // footer
@@ -324,19 +295,13 @@ $("#add_user_button").click(function () {
             label: '确定',
             action: function (dialogItself) {
                 // 获取用户添加数据
+                var user_name = $("#add_user_name").val();
                 var user_email = $("#add_user_email").val();
+                var user_pwd = $("#add_user_pwd").val();
 
                 var user_right = 0;
                 if ($("#manager_control_in_dialog").prop('checked')) {
                     user_right |= 0B001;
-                }
-
-                if ($('#edit_monitor_in_dialog').prop('checked')) {
-                    user_right |= 0B010;
-                }
-
-                if ($('#restart_control_in_dialog').prop('checked')) {
-                    user_right |= 0B100;
                 }
 
                 // 发送请求
@@ -344,7 +309,9 @@ $("#add_user_button").click(function () {
                         url: '/api_add_user',
                         type: "post",
                         data: {
+                            'user_name': user_name,
                             'user_email': user_email,
+                            'user_pwd': user_pwd,
                             'user_right': user_right
                         },
                         dataType: 'json',
@@ -384,18 +351,15 @@ function refresh_view(data) {
 }
 
 // 在表格中增加用户
-function add_row(user_id, user_account, user_right, create_time) {
+function add_row(user_id, user_name, user_email, user_right, create_time) {
     var user_control = get_img_by_user_right(user_right, 0B001);
-    var edit_monitor_control = get_img_by_user_right(user_right, 0B010);
-    var service_restart_control = get_img_by_user_right(user_right, 0B100);
 
     var table = $("#user_list_result");
     var tr = $('<tr>' +
         '<td style="text-align:center;"><input name="user_list[]" type="checkbox" value="' + user_id + '"></td>' +
         '<td style="text-align:center;">' + user_id + '</td>' +
-        '<td style="text-align:center;">' + user_account + '</td>' +
-        '<td style="text-align:center;">' + edit_monitor_control + '</td>' +
-        '<td style="text-align:center;">' + service_restart_control + '</td>' +
+        '<td style="text-align:center;">' + user_name + '</td>' +
+        '<td style="text-align:center;">' + user_email + '</td>' +
         '<td style="text-align:center;">' + user_control + '</td>' +
         '<td style="text-align:center;">' + create_time + '</td>' +
         '<td style="text-align:center;"><button type="button" class="btn btn-xs btn-default user-edit-button">编辑</button></td>');

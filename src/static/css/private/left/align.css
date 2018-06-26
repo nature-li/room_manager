@@ -38,3 +38,17 @@
     text-align: center;
     vertical-align: middle;
 }
+
+.alert-top {
+    position: fixed;
+    top: 10%;
+    right: 1%;
+    width: 30%;
+    z-index: 999;
+}
+
+.caret-right {
+    border-left: 4px solid;
+    border-bottom: 4px solid transparent;
+    border-top: 4px solid transparent;
+}

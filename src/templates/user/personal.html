@@ -1,7 +1,7 @@
 {% extends '../nav_base.html' %}
 
 {% block header %}
-<title>用户列表</title>
+<title>个人信息</title>
 <!-- Bootstrap Core CSS -->
 <link href="/static/css/bootstrap.min.css" rel="stylesheet">
 <link href="/static/css/bootstrap-dialog/bootstrap-dialog.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
 <script src="/static/js/bootstrap-dialog/bootstrap-dialog.min.js"></script>
 {% end %}
 
-{%block user_list_menu%}
+{%block personal_menu%}
 chosen-menu
 {%end%}
 
@@ -37,7 +37,7 @@ chosen-menu
             <a id="expand-side-bar" class="navbar-brand side-bar-show {%if login_user.pin_nav == 1%}hidden-self{%end%}" href="#">
                 <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
             </a>
-            <span class="navbar-brand">用户列表</span>
+            <span class="navbar-brand">个人信息</span>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -53,14 +53,6 @@ chosen-menu
                     </ul>
                 </li>
             </ul>
-
-            <form class="navbar-form navbar-right" style="width: 400px">
-                <div class="form-group" style="width: 80%">
-                    <input id="search_user_name" type="text" class="form-control" placeholder="搜索账号"
-                           style="width: 100%">
-                </div>
-                <button id="search_user_name_btn" type="button" class="btn btn-default">搜索</button>
-            </form>
         </div>
     </div>
 </nav>
@@ -68,24 +60,54 @@ chosen-menu
 
 
 {% block body_content %}
-<table id="user_list_result" class="table table-striped table-bordered table-hover">
-    <thead>
-    <tr>
-        <th style="text-align:center" width="20"><input id="check_all" type="checkbox" value=""></th>
-        <th style="text-align:center">ID</th>
-        <th style="text-align:center">昵称</th>
-        <th style="text-align:center">邮箱</th>
-        <th style="text-align:center">用户管理</th>
-        <th style="text-align:center">添加日期</th>
-        <th style="text-align:center">操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
 
-<button id="add_user_button" type="button" class="btn btn-primary">增加</button>
-<button id="del_user_button" type="button" class="btn btn-primary">删除</button>
+<div class="col-xs-12">
+    <label>修改昵称</label>
+</div>
+<div class="col-xs-4 col-xs-offset-1">
+    <form>
+        <div class="form-group">
+            <span>邮箱:</span>
+            <input type="email" class="form-control" value="{{ login_user.user_email }}" readonly/>
+        </div>
+        <div class="form-group">
+            <span>昵称:</span><span id="exist_tips" style="color: red;"></span>
+            <input id="user_name" class="form-control" value="{{ login_user.user_name }}"/>
+        </div>
+        <div class="form-group text-right">
+            <button id="change_user_name_btn" type="button" class="btn btn-primary">确认修改</button>
+        </div>
+    </form>
+</div>
+<div class="col-xs-12">
+    <hr/>
+</div>
+
+<div class="col-xs-12">
+    <label>修改密码</label>
+</div>
+<div class="col-xs-4 col-xs-offset-1">
+    <form>
+        <div class="form-group">
+            <span>请输入原密码:</span>
+            <input id="old_pwd" type="password" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <span>新密码:</span>
+            <input id="new_pwd" type="password" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <span>确认新密码:</span>
+            <input id="retype_new_pwd" type="password" class="form-control"/>
+        </div>
+        <div class="form-group text-right">
+            <button id="change_user_pwd_btn" type="button" class="btn btn-primary">确认修改</button>
+        </div>
+    </form>
+</div>
+<div class="col-xs-12">
+    <hr/>
+</div>
 
 <div style="text-align: right">
     <span id="data_count_tip" style="margin-right: 15px;"></span>
@@ -98,5 +120,5 @@ chosen-menu
 
 
 {% block body_tail %}
-<script src="/static/js/private/pages/user_list.js"></script>
+<script src="/static/js/private/pages/personal.js"></script>
 {% end %}

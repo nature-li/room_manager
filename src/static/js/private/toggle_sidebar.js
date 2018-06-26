@@ -66,3 +66,13 @@ $("#machine_list_menu").click(function () {
 $("#start_history_menu").click(function () {
     window.location.replace("/start_history");
 });
+
+// 点击个人信息
+$("#personal_menu").click(function () {
+    window.location.replace("/personal");
+});
+
+// 点击房客列表
+$("#room_list_menu").click(function () {
+    window.location.replace("/room_list");
+});

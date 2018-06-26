@@ -5,25 +5,25 @@ $(document).ready(function () {
         var captcha_value = $("#captcha_value").val();
 
         if (!user_email || !user_email.trim()) {
-            show_alert_msg("用户名为空");
+            page_error("用户名为空");
             change_captcha();
             return;
         }
 
         if (!user_password || !user_password.trim()) {
-            show_alert_msg("密码为空");
+            page_error("密码为空");
             change_captcha();
             return;
         }
 
         if (!captcha_value || !captcha_value.trim()) {
-            show_alert_msg("验证码为空");
+            page_error("验证码为空");
             change_captcha();
             return;
         }
 
         $.ajax({
-                url: '/user_login_api',
+                url: '/api_login',
                 type: "post",
                 data: {
                     'user_email': user_email,
@@ -38,7 +38,7 @@ $(document).ready(function () {
                     if (jqXHR.status == 302) {
                         window.location.replace("/");
                     } else {
-                        show_alert_msg("登录失败");
+                        page_error("登录失败");
                         change_captcha();
                     }
                 }
@@ -54,8 +54,18 @@ $(document).ready(function () {
 });
 
 function login_callback(data) {
-    if (data.success != true) {
-        show_alert_msg(data.message);
+    if (data.code !== 0) {
+        if (data.code === 1) {
+            page_error("Please input whole info");
+        } else if (data.code === 2) {
+            page_error("Captcha error");
+        } else if (data.code === 3) {
+            page_error("User not exist");
+        } else if (data.code === 4) {
+            page_error("Password error");
+        } else {
+            page_error("Other error");
+        }
         change_captcha();
         return;
     }
@@ -76,11 +86,10 @@ function change_captcha() {
                 get_captcha_callback(response);
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                if (jqXHR.status == 302) {
+                if (jqXHR.status === 302) {
                     window.location.replace("/");
                 } else {
-                    show_alert_msg("GET_CAPTCHA_FAILED");
-                    change_captcha();
+                    console.log("error");
                 }
             }
         }

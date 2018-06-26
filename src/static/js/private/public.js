@@ -198,3 +198,34 @@ function init_machine_list() {
         }
     );
 }
+
+// 消息提示
+function alert_msg(success, message) {
+    var html = '';
+    html += '<div class="alert ' + success + '">';
+    html += '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>';
+    html += message;
+    html += '</div>';
+
+    $(".alert-top").html(html);
+    $(".alert-top").show();
+    setTimeout(function () {
+        $(".alert-top").hide();
+    }, 2000);
+}
+
+function page_success(content) {
+    alert_msg('alert-success', content);
+}
+
+function page_info(content) {
+    alert_msg('alert-info', content);
+}
+
+function page_warn(content) {
+    alert_msg('alert-warning', content);
+}
+
+function page_error(content) {
+    alert_msg('alert-danger', content);
+}

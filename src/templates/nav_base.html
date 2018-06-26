@@ -26,27 +26,20 @@
                     </a>
                 </span>
             </li>
+
             {% if login_user.user_right & 0B001 != 0 %}
             <li id="user_list_menu" class="side-bar-condition-hidden side-bar-menu {%block user_list_menu%}{%end%}">
-                <a href="#">权限管理</a>
+                <a href="#">用户列表</a>
             </li>
             {% end %}
 
-            {% if login_user.user_right & 0B010 != 0 %}
-            <li id="machine_list_menu" class="side-bar-condition-hidden side-bar-menu {%block machine_list_menu%}{%end%}">
-                <a href="#">机器列表</a>
-            </li>
-            {% end %}
-
-            <li id="service_list_menu" class="side-bar-condition-hidden side-bar-menu {%block monitor_list_menu%}{%end%}">
-                <a href="#">节点监测</a>
+            <li id="personal_menu" class="side-bar-condition-hidden side-bar-menu {%block personal_menu%}{%end%}">
+                <a href="#">个人信息</a>
             </li>
 
-            {% if login_user.user_right & 0B100 != 0 %}
-            <li id="start_history_menu" class="side-bar-condition-hidden side-bar-menu {%block start_history_menu%}{%end%}">
-                <a href="#">操作记录</a>
+            <li id="room_list_menu" class="side-bar-condition-hidden side-bar-menu {%block room_list_menu%}{%end%}">
+                <a href="#">客房列表</a>
             </li>
-            {% end %}
         </ul>
     </div>
 
@@ -67,5 +60,9 @@
 
 {% block body_tail %}
 {% end %}
+
+<div class="alert-top">
+</div>
+
 </body>
 </html>

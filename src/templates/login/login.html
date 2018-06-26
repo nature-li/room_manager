@@ -43,12 +43,18 @@
                         <input id="login-password" type="password" class="form-control" name="password" placeholder="password">
                     </div>
 
-                    <div style="margin-top:10px" class="form-group">
-                        <div class="col-sm-12 controls">
-                            <input id="captcha_value" type="text" style="height: 40px" placeholder="验证码"/>
-                            <a id="a_for_captcha_img" href="#">
-                                <img id="captcha_img" style="float: right" src="">
-                            </a>
+                    <div style="margin-top:10px;" class="form-group">
+                        <div class="col-sm-12 form-horizontal">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <input id="captcha_value" type="text" class="form-control" style="width: 130px" placeholder="验证码"/>
+                                </div>
+                                <div class="col-sm-6">
+                                    <a id="a_for_captcha_img" href="#">
+                                        <img id="captcha_img" style="float: right" src="">
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -61,6 +67,9 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="alert-top">
 </div>
 </body>
 <script src="/static/js/private/public.js"></script>

@@ -5,6 +5,7 @@ import datetime
 import json
 import traceback
 import requests
+import hashlib
 from sqlalchemy import create_engine
 from sqlalchemy import or_, not_, and_
 from sqlalchemy.orm import sessionmaker
@@ -58,9 +59,12 @@ class DbOperator(object):
 
     # 增加用户
     @classmethod
-    def add_one_user(cls, user_email, user_right):
+    def add_one_user(cls, user_name, user_email, user_pwd, user_right):
         try:
-            user = Users(user_email=user_email, user_right=user_right)
+            m = hashlib.md5()
+            m.update(user_pwd)
+            pwd_md5 = m.hexdigest()
+            user = Users(user_name=user_name, user_email=user_email, user_pwd=pwd_md5, user_right=user_right)
             session = sessionmaker(bind=cls.engine)()
             with Defer(session.close):
                 session.add(user)
@@ -80,7 +84,7 @@ class DbOperator(object):
 
     # 查询用户
     @classmethod
-    def query_user_list(cls, user_email, off_set, limit):
+    def query_user_list(cls, user_name, off_set, limit):
         try:
             # 转换类型
             off_set = int(off_set)
@@ -96,15 +100,16 @@ class DbOperator(object):
                 # 查询数据
                 count_query = session.query(Users.id)
                 value_query = session.query(Users.id,
+                                            Users.user_name,
                                             Users.user_email,
                                             Users.user_right,
                                             Users.create_time)
-                if user_email != '':
-                    like_condition = '%' + user_email + '%'
-                    count_query = count_query.filter(Users.user_email.like(like_condition))
-                    value_query = value_query.filter(Users.user_email.like(like_condition))
+                if user_name != '':
+                    like_condition = '%' + user_name + '%'
+                    count_query = count_query.filter(Users.user_name.like(like_condition))
+                    value_query = value_query.filter(Users.user_name.like(like_condition))
                 count = count_query.count()
-                values = value_query[off_set: limit_count]
+                values = value_query.order_by(Users.id.desc())[off_set: limit_count]
 
                 # 返回结果
                 a_user_list = list()
@@ -112,6 +117,7 @@ class DbOperator(object):
                     a_user = dict()
                     a_user_list.append(a_user)
                     a_user['id'] = value.id
+                    a_user['user_name'] = value.user_name
                     a_user['user_email'] = value.user_email
                     a_user['user_right'] = value.user_right
                     a_user['create_time'] = value.create_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -993,4 +999,59 @@ class DbOperator(object):
             a_dict['success'] = False
             a_dict['content'] = list()
             a_dict['item_count'] = 0
-        return json.dumps(a_dict)
+            return json.dumps(a_dict)
+
+    @classmethod
+    def change_user_name(cls, user_email, user_name):
+        """
+        :rtype: tuple[int, str]
+        """
+        try:
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                # query and update info
+                user = session.query(Users).filter(Users.user_email == user_email).one()
+                user.user_name = user_name
+
+                # commit
+                session.commit()
+                return 0
+        except:
+            Logger.error(traceback.format_exc())
+            return None
+
+    @classmethod
+    def get_user_count(cls, user_name):
+        try:
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                count = session.query(Users).filter(Users.user_name == user_name).count()
+                return count
+        except:
+            Logger.error(traceback.format_exc())
+            return None
+
+    @classmethod
+    def change_user_pwd(cls, user_email, old_pwd, new_pwd):
+        try:
+            m = hashlib.md5()
+            m.update(old_pwd)
+            old_md5 = m.hexdigest()
+            m = hashlib.md5()
+            m.update(new_pwd)
+            new_md5 = m.hexdigest()
+
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                user = session.query(Users).filter(Users.user_email == user_email).first()
+                if not user:
+                    Logger.info("There is no user_email[%s]" % user_email)
+                    return False, 'User not exist'
+                if old_md5 != user.user_pwd:
+                    return False, 'Old password is error'
+                user.user_pwd = new_md5
+                session.commit()
+            return 0, 'OK'
+        except:
+            Logger.error(traceback.format_exc())
+            return -1, 'Internal error'

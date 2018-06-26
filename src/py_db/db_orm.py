@@ -12,10 +12,13 @@ Base = declarative_base()
 class Users(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_name = Column(String(128), nullable=True)
-    user_pwd = Column(String(128), nullable=True)
+    user_name = Column(String(128))
+    user_email = Column(String(128))
+    user_pwd = Column(String(128))
+    user_right = Column(Integer)
     create_time = Column(TIMESTAMP, default=func.now())
-    UniqueConstraint(`user_name`)
+    UniqueConstraint('user_name')
+    UniqueConstraint('user_email')
 
 
 # Rooms
