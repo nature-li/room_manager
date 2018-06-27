@@ -1,0 +1,41 @@
+.div_table {
+    display: table;
+    border-collapse: collapse;
+}
+
+.div_row {
+    display: table-row;
+}
+
+.div_cell {
+    display: table-cell;
+    cursor: pointer;
+}
+
+.week_box {
+    width: 90px;
+    text-align: center;
+}
+
+.date_box {
+    width: 90px;
+    height: 90px;
+    border: 1px solid #ccc;
+    position: relative;
+}
+
+.date_box span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
+.click_cell {
+
+}
+
+.selected_cell {
+    background-color: lightpink;
+}
