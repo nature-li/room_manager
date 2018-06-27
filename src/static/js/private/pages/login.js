@@ -23,7 +23,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-                url: '/api_login',
+                url: '/login',
                 type: "post",
                 data: {
                     'user_email': user_email,

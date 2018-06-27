@@ -1,0 +1,175 @@
+{% extends '../nav_base.html' %}
+
+{% block header %}
+<title>增加客房</title>
+<!-- Bootstrap Core CSS -->
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/bootstrap-dialog/bootstrap-dialog.min.css" rel="stylesheet">
+
+<!-- Custom CSS -->
+<link href="/static/css/private/left/simple-sidebar.css" rel="stylesheet">
+<link href="/static/css/private/left/align.css" rel="stylesheet">
+<link href="/static/css/private/pages/monitor.css" rel="stylesheet">
+<link href="/static/css/bootstrap-select/bootstrap-select.css" rel="stylesheet">
+<link href="/static/css/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet">
+
+<!-- Bootstrap Core JS -->
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/jquery.cookie.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/bootstrap-select/bootstrap-select.js"></script>
+<script src="/static/js/bootstrap-dialog/bootstrap-dialog.min.js"></script>
+<script src="/static/js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<script src="/static/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script src="/static/js/moment/moment-with-locales.js"></script>
+{% end %}
+
+{% block room_list_menu %}
+chosen-menu
+{% end %}
+
+{% block body_navigate %}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a id="expand-side-bar"
+               class="navbar-brand side-bar-show {% if login_user.pin_nav == 1 %}hidden-self{% end %}" href="#">
+                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+            </a>
+            <span class="navbar-brand">客房列表</span>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/room_list">客房列表</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">增加客房</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">{{ login_user.user_name }}<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/logout">退出</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% end %}
+
+
+{% block body_content %}
+<div class="col-xs-4 col-xs-offset-1">
+    <form>
+        <div class="form-group">
+            <span for="room_name">客房名称:</span><span class="red_label">*</span>
+            <input id="room_name" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <span>客房密码:</span>
+            <input id="room_pwd" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <span>路由器账号:</span>
+            <input id="rooter_name" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <span>路由器密码:</span>
+            <input id="rooter_pwd" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <span>Wi-Fi账号:</span>
+            <input id="wifi_name" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <span>Wi-Fi密码:</span>
+            <input id="wifi_pwd" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <span>电费日期:</span>
+            <div class='input-group date' id='electric_date'>
+                <input class="form-control" readonly/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <span>电费余额:</span>
+            <input id="electric_fee" type="number" class="form-control" value="0"/>
+        </div>
+        <div class="form-group">
+            <span>水费日期:</span>
+            <div class='input-group date' id='water_date'>
+                <input class="form-control" readonly/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <span>水费余额:</span>
+            <input id="water_fee" type="number" class="form-control" value="0"/>
+        </div>
+        <div class="form-group">
+            <span>燃气费日期:</span>
+            <div class='input-group date' id='gas_date'>
+                <input class="form-control" readonly/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <span>燃气费余额:</span>
+            <input id="gas_fee" type="number" class="form-control" value="0"/>
+        </div>
+        <div class="form-group">
+            <span>网费日期:</span>
+            <div class='input-group date' id='net_date'>
+                <input class="form-control" readonly/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <span>网费余额:</span>
+            <input id="net_fee" type="number" class="form-control" value="0"/>
+        </div>
+        <div class="form-group">
+            <span>其它信息:</span>
+            <textarea id="room_desc" class="form-control" rows="10" maxlength="4096" placeholder="添加其它信息"></textarea>
+        </div>
+    </form>
+</div>
+
+<div class="col-xs-12">
+    <hr/>
+</div>
+
+<div class="col-xs-4 col-xs-offset-1">
+    <button id="add_room_btn" type="button" class="btn btn-primary">添加</button>
+    <button id="go_home_btn" type="button" class="btn btn-default">取消</button>
+</div>
+{% end %}
+
+
+{% block body_tail %}
+<script src="/static/js/private/public.js"></script>
+<script src="/static/js/private/pages/add_room.js"></script>
+{% end %}

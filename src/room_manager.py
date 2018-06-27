@@ -313,7 +313,6 @@ class ApiChangeUserName(BaseHandler):
         self.write(json.dumps(a_dict, ensure_ascii=False))
 
 
-
 class ApiChangeUserPwd(BaseHandler):
     def post(self):
         login_user = self.get_login_user()
@@ -829,6 +828,9 @@ class LoginHandler(tornado.web.RequestHandler):
             a_dict['msg'] = 'empty input'
             self.write(json.dumps(a_dict, ensure_ascii=False))
             return
+        user_email = user_email.strip()
+        user_password = user_password.strip()
+        captcha_value = captcha_value.strip()
 
         if captcha_value != self.get_secure_cookie('captcha_value'):
             a_dict['code'] = 2
@@ -852,7 +854,8 @@ class LoginHandler(tornado.web.RequestHandler):
             self.write(json.dumps(a_dict, ensure_ascii=False))
             return
 
-        self.set_secure_cookie("user_email", user_email, expires_days=None)
+        self.set_secure_cookie("user_id", str(user.id), expires_days=None)
+        self.set_secure_cookie("user_email", user.user_email, expires_days=None)
         self.set_secure_cookie("user_name", user.user_name, expires_days=None)
         self.set_secure_cookie("user_right", str(user.user_right), expires_days=None)
         self.set_secure_cookie("last_time", str(time.time()), expires_days=None)
@@ -870,11 +873,108 @@ class RoomList(BaseHandler):
             return
         self.render('room/room_list.html', login_user=login_user)
 
+    def post(self):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
+        room_name = self.get_argument('room_name')
+        off_set = self.get_argument("off_set")
+        limit = self.get_argument("limit")
+        user_id = self.get_secure_cookie('user_id')
+        text = DbOperator.query_room_list(user_id, room_name, off_set, limit)
+        self.write(text)
+
+
+class AddRoom(BaseHandler):
+    def get(self):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        self.render('room/add_room.html', login_user=login_user)
+
+    def post(self):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
+        room_name = self.get_argument('room_name')
+        room_pwd = self.get_argument('room_pwd')
+        rooter_name = self.get_argument('rooter_name')
+        rooter_pwd = self.get_argument('rooter_pwd')
+        wifi_name = self.get_argument('wifi_name')
+        wifi_pwd = self.get_argument('wifi_pwd')
+        electric_date = self.get_argument('electric_date')
+        electric_fee = self.get_argument('electric_fee')
+        water_date = self.get_argument('water_date')
+        water_fee = self.get_argument('water_fee')
+        gas_date = self.get_argument('gas_date')
+        gas_fee = self.get_argument('gas_fee')
+        net_date = self.get_argument('net_date')
+        net_fee = self.get_argument('net_fee')
+
+        a_dict = dict()
+        if not room_name:
+            a_dict['code'] = 1
+            a_dict['msg'] = 'Room name is empty'
+            self.write(json.dumps(a_dict, ensure_ascii=False))
+            return
+        user_id = self.get_secure_cookie('user_id')
+        code, msg = DbOperator.insert_one_room(user_id, room_name, room_pwd, rooter_name, rooter_pwd, wifi_name, wifi_pwd,
+                                               electric_date, electric_fee, water_date, water_fee,
+                                               gas_date, gas_fee, net_date, net_fee)
+        a_dict['code'] = code
+        a_dict['msg'] = msg
+        self.write(json.dumps(a_dict, ensure_ascii=False))
+
+
+class EditRoom(BaseHandler):
+    def get(self):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        self.render('room/edit_room.html', login_user=login_user)
+
+    def post(self):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
+        room_name = self.get_argument('room_name')
+        room_pwd = self.get_argument('room_pwd')
+        rooter_name = self.get_argument('rooter_name')
+        rooter_pwd = self.get_argument('rooter_pwd')
+        wifi_name = self.get_argument('wifi_name')
+        wifi_pwd = self.get_argument('wifi_pwd')
+        electric_date = self.get_argument('electric_date')
+        electric_fee = self.get_argument('electric_fee')
+        water_date = self.get_argument('water_date')
+        water_fee = self.get_argument('water_fee')
+        gas_date = self.get_argument('gas_date')
+        gas_fee = self.get_argument('gas_fee')
+        net_date = self.get_argument('net_date')
+        net_fee = self.get_argument('net_fee')
+        room_desc = self.get_argument('room_desc')
+
+        a_dict = dict()
+        if not room_name:
+            a_dict['code'] = 1
+            a_dict['msg'] = 'Room name is empty'
+            self.write(json.dumps(a_dict, ensure_ascii=False))
+            return
+        user_id = self.get_secure_cookie('user_id')
+        code, msg = DbOperator.insert_one_room(user_id, room_name, room_pwd, rooter_name, rooter_pwd, wifi_name, wifi_pwd,
+                                               electric_date, electric_fee, water_date, water_fee,
+                                               gas_date, gas_fee, net_date, net_fee, room_desc)
+        a_dict['code'] = code
+        a_dict['msg'] = msg
+        self.write(json.dumps(a_dict, ensure_ascii=False))
+
 
 class Captcha(tornado.web.RequestHandler):
     def post(self):
-        chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'k', 'm', 'n', 'p', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-                 '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        chars = ['a', 'b', 'c', 'd', 'e', 'f', 'h', 'k', 'm', 'n', 'p', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
+                 '3', '4', '5', '6', '8']
         captcha_value = ''.join(random.sample(population=chars, k=4))
 
         image = ImageCaptcha(width=100, height=34, font_sizes=(28, 29, 30, 31, 32, 33))
@@ -947,7 +1047,6 @@ def __main__():
             (r'/', RoomList),
             (r'/refuse', RefuseHandler),
             (r'/login', LoginHandler),
-            (r'/api_login', LoginHandler),
             (r'/logout', LogoutHandler),
             (r'/user_list', UserListHandler),
             (r'/api_add_user', AddUserHandler),
@@ -958,7 +1057,9 @@ def __main__():
             (r'/get_user_count', GetUserCount),
             (r'/api_change_user_name', ApiChangeUserName),
             (r'/api_change_user_pwd', ApiChangeUserPwd),
+            (r'/add_room', AddRoom),
             (r'/room_list', RoomList),
+            (r'/edit_room', EditRoom),
             (r'/captcha', Captcha),
         ],
         cookie_secret=Config.LOGIN_COOKIE_SECRET,
@@ -967,11 +1068,12 @@ def __main__():
         xsrf_cookies=False,
         debug=Config.DEBUG_MODE
     )
-    http_server = tornado.httpserver.HTTPServer(app, ssl_options={
-        'certfile': '/Users/liyanguo/cluster/centos/work/room_manager/key/ssl.crt',
-        'keyfile': '/Users/liyanguo/cluster/centos/work/room_manager/key/ssl.key'
-    })
-    http_server.listen(443)
+    # http_server = tornado.httpserver.HTTPServer(app, ssl_options={
+    #     'certfile': '/Users/liyanguo/cluster/centos/work/room_manager/key/ssl.crt',
+    #     'keyfile': '/Users/liyanguo/cluster/centos/work/room_manager/key/ssl.key'
+    # })
+    # http_server.listen(433)
+    app.listen(Config.LISTEN_PORT, Config.LISTEN_HOST)
     now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print '%s starting' % now
     tornado.ioloop.IOLoop.current().start()

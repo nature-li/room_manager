@@ -22,7 +22,7 @@ function save_data_and_update_page_view(data) {
         // 更新view
         update_page_view(window.save_data.view_current_page_idx);
     } else {
-        $.showErr("发生错误");
+        console.log("error");
     }
 }
 

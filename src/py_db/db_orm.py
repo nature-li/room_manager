@@ -2,7 +2,7 @@
 # coding: utf-8
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, BigInteger, TIMESTAMP, UniqueConstraint
+from sqlalchemy import Column, Integer, String, BigInteger, Float, TIMESTAMP, UniqueConstraint, Date
 from sqlalchemy.sql import func
 
 Base = declarative_base()
@@ -27,10 +27,19 @@ class Rooms(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_name = Column(String(128))
     room_pwd = Column(String(128))
-    admin_user = Column(String(128))
-    admin_pwd = Column(String(128))
+    rooter_name = Column(String(128))
+    rooter_pwd = Column(String(128))
     wifi_name = Column(String(128))
     wifi_pwd = Column(String(128))
+    electric_date = Column(Date)
+    electric_fee = Column(Float)
+    water_date = Column(Date)
+    water_fee = Column(Float)
+    gas_date = Column(Date)
+    gas_fee = Column(Float)
+    net_date = Column(Date)
+    net_fee = Column(Float)
+    desc = Column(String(4096))
     create_time = Column(TIMESTAMP, default=func.now())
     UniqueConstraint('room_name')
 
@@ -53,5 +62,16 @@ class Operator(Base):
     day = Column(Integer)
     state = Column(Integer)
     UniqueConstraint('room_id', 'plat_id', 'day')
+
+
+# Relates
+class Relates(Base):
+    __tablename__ = 'relates'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer)
+    room_id = Column(Integer)
+    create_time = Column(TIMESTAMP, default=func.now())
+    UniqueConstraint('user_id', 'room_id')
+
 
 

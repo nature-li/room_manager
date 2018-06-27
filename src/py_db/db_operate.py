@@ -1055,3 +1055,108 @@ class DbOperator(object):
         except:
             Logger.error(traceback.format_exc())
             return -1, 'Internal error'
+
+    @classmethod
+    def insert_one_room(cls, user_id, room_name, room_pwd, rooter_name, rooter_pwd, wifi_name, wifi_pwd,
+                        electric_date, electric_fee, water_date, water_fee, gas_date, gas_fee, net_date, net_fee,
+                        room_desc):
+        try:
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                # Query service name
+                count = session.query(Rooms).filter(Rooms.room_name == room_name).count()
+                if count > 0:
+                    return -1, 'Room name exists'
+
+                # insert base info
+                room = Rooms()
+                room.room_name = room_name
+                room.room_pwd = room_pwd
+                room.rooter_name = rooter_name
+                room.rooter_pwd = rooter_pwd
+                room.wifi_name = wifi_name
+                room.wifi_pwd = wifi_pwd
+                room.electric_date = datetime.datetime.strptime(electric_date, '%Y-%m-%d').date()
+                room.electric_fee = float(electric_fee)
+                room.water_date = datetime.datetime.strptime(water_date, '%Y-%m-%d').date()
+                room.water_fee = float(water_fee)
+                room.gas_date = datetime.datetime.strptime(gas_date, '%Y-%m-%d').date()
+                room.gas_fee = float(gas_fee)
+                room.net_date = datetime.datetime.strptime(net_date, '%Y-%m-%d').date()
+                room.net_fee = float(net_fee)
+                room.desc = room_desc
+                session.add(room)
+                session.flush()
+
+                relate = Relates()
+                relate.user_id = user_id
+                relate.room_id = room.id
+                session.add(relate)
+                session.flush()
+                session.commit()
+                return 0, 'OK'
+        except:
+            Logger.error(traceback.format_exc())
+            return -1, 'Internal error'
+
+    @classmethod
+    def query_room_list(cls, user_id, room_name, off_set, limit):
+        try:
+            off_set = int(off_set)
+            limit = int(limit)
+            if limit == -1:
+                limit_count = None
+            else:
+                limit_count = off_set + limit
+
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                # 查询数据
+                count_query = session.query(Rooms.id).join(
+                    Relates, Relates.room_id == Rooms.id).filter(
+                    Relates.user_id == user_id)
+                value_query = session.query(
+                    Rooms.id,
+                    Rooms.room_name,
+                    Rooms.room_pwd,
+                    Rooms.rooter_name,
+                    Rooms.rooter_pwd,
+                    Rooms.wifi_name,
+                    Rooms.wifi_pwd,
+                    Rooms.create_time).join(
+                    Relates, Relates.room_id == Rooms.id).filter(
+                    Relates.user_id == user_id)
+                if room_name != '':
+                    room_condition = '%' + room_name + '%'
+                    count_query = count_query.filter(Rooms.room_name.like(room_condition))
+                    value_query = value_query.filter(Rooms.room_name.like(room_condition))
+                count = count_query.count()
+                values = value_query[off_set: limit_count]
+
+                # 返回结果
+                result_list = list()
+                for value in values:
+                    item = dict()
+                    result_list.append(item)
+                    item['id'] = value.id
+                    item['room_name'] = value.room_name
+                    item['room_pwd'] = value.room_pwd
+                    item['rooter_name'] = value.rooter_name
+                    item['rooter_pwd'] = value.rooter_pwd
+                    item['wifi_name'] = value.wifi_name
+                    item['wifi_pwd'] = value.wifi_pwd
+                    item['create_time'] = value.create_time.strftime('%Y-%m-%d %H:%M:%S')
+
+                # 返回成功
+                a_dict = dict()
+                a_dict['success'] = True
+                a_dict['content'] = result_list
+                a_dict['item_count'] = count
+                return json.dumps(a_dict)
+        except:
+            Logger.error(traceback.format_exc())
+            a_dict = dict()
+            a_dict['success'] = False
+            a_dict['content'] = list()
+            a_dict['item_count'] = 0
+            return json.dumps(a_dict)
