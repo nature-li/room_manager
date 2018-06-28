@@ -9,22 +9,57 @@
 
 .div_cell {
     display: table-cell;
-    cursor: pointer;
 }
 
 .week_box {
-    width: 90px;
+    width: 120px;
     text-align: center;
+    border-bottom: 1px solid #ccc;
 }
 
 .date_box {
-    width: 90px;
-    height: 90px;
+    width: 120px;
+    height: 28px;
     border: 1px solid #ccc;
     position: relative;
+    background-color: lightblue;
+    color: green;
+}
+
+.empty_date_box {
+    width: 120px;
+    height: 28px;
+    position: relative;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.plat_box {
+    width: 120px;
+    height: 28px;
+    border: 1px solid #ccc;
+    position: relative;
+    cursor: pointer;
+    background-color: lightyellow;
+}
+
+.empty_plat_box {
+    width: 120px;
+    height: 28px;
+    position: relative;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
 }
 
 .date_box span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
+.plat_box span {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -38,4 +73,5 @@
 
 .selected_cell {
     background-color: lightpink;
+    color: green;
 }

@@ -1,10 +1,50 @@
 $(document).ready(function () {
+    init_plat_selector();
     init_datetime_picker();
 });
+
+function init_plat_selector() {
+    $.ajax({
+        url: '/room_plat',
+        type: 'get',
+        dataType: 'json',
+        success: function (response) {
+            init_plat_selector_callback(response);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status === 302) {
+                window.location.replace('/');
+            } else {
+                page_error('Occur error!');
+            }
+        }
+    });
+}
+
+function init_plat_selector_callback(response) {
+    if (response.code !== 0) {
+        console.log('error');
+        return;
+    }
+
+    for (var i = 0; i < response.content.length; i++) {
+        var item = response.content[i];
+        var option = '<option value=' + item.id + '>' + item.plat_name + '</option>';
+        $('#sale_plat').append(option);
+    }
+    $('#sale_plat').selectpicker('refresh');
+}
 
 
 function init_datetime_picker() {
     var when = new Date();
+
+    $('#room_pwd_date').datepicker({
+        language: 'zh-CN',
+        autoclose: true,
+        todayHighlight: true
+    });
+    $("#room_pwd_date").datepicker('setDate', when);
 
     $('#electric_date').datepicker({
         language: 'zh-CN',
@@ -46,6 +86,8 @@ function get_date_from_picker(picker_id) {
 
 $(document).on('click', '#add_room_btn', function () {
     var room_name = $("#room_name").val().trim();
+    var sale_plat = $("#sale_plat").val().join(',');
+    var room_pwd_date = get_date_from_picker('#room_pwd_date');
     var room_pwd = $("#room_pwd").val().trim();
     var rooter_name = $("#rooter_name").val().trim();
     var rooter_pwd = $("#rooter_pwd").val().trim();
@@ -66,11 +108,18 @@ $(document).on('click', '#add_room_btn', function () {
         return;
     }
 
+    if (sale_plat === '') {
+        page_warn("Sale plat can't be empty");
+        return;
+    }
+
     $.ajax({
         url: '/add_room',
         type: 'post',
         data: {
             room_name: room_name,
+            sale_plat: sale_plat,
+            room_pwd_date: room_pwd_date,
             room_pwd: room_pwd,
             rooter_name: rooter_name,
             rooter_pwd: rooter_pwd,
@@ -113,5 +162,5 @@ function add_room_callback(response) {
 
 
 $(document).on('click', '#go_home_btn', function () {
-   window.location.replace('/');
+    window.location.replace('/');
 });

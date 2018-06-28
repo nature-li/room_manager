@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS `rooms`;
 CREATE TABLE IF NOT EXISTS `rooms` (
   `id`            INT           NOT NULL AUTO_INCREMENT,
   `room_name`     VARCHAR(128)  NOT NULL,
+  `room_pwd_date` DATE          NULL,
   `room_pwd`      VARCHAR(128)  NULL,
   `rooter_name`   VARCHAR(128)  NULL,
   `rooter_pwd`    VARCHAR(128)  NULL,
@@ -49,15 +50,16 @@ CREATE TABLE IF NOT EXISTS `plats` (
   UNIQUE KEY `plat_name` (`plat_name`)
 )
   DEFAULT CHARSET = utf8;
+INSERT INTO plats (id, plat_name) VALUES (1, '爱迎彼'), (2, '途家'), (3, '榛果'), (4, '小猪');
 
 
-DROP TABLE IF EXISTS `state`;
-CREATE TABLE IF NOT EXISTS `state` (
-  `id`      INT NOT NULL AUTO_INCREMENT,
-  `room_id` INT NOT NULL,
-  `plat_id` INT NOT NULL,
-  `day`     INT NOT NULL,
-  `state`   INT NOT NULL,
+DROP TABLE IF EXISTS `states`;
+CREATE TABLE IF NOT EXISTS `states` (
+  `id`      INT  NOT NULL AUTO_INCREMENT,
+  `room_id` INT  NOT NULL,
+  `plat_id` INT  NOT NULL,
+  `day`     DATE NOT NULL,
+  `state`   INT  NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `room_plat_day` (`room_id`, `plat_id`, `day`)
 )
@@ -72,5 +74,17 @@ CREATE TABLE IF NOT EXISTS `relates` (
   `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_room_id` (`user_id`, `room_id`)
+)
+  DEFAULT CHARSET = utf8;
+
+
+DROP TABLE IF EXISTS `sales`;
+CREATE TABLE IF NOT EXISTS `sales` (
+  `id`          INT       NOT NULL AUTO_INCREMENT,
+  `room_id`     INT       NOT NULL,
+  `plat_id`     INT       NOT NULL,
+  `create_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `room_plat_id` (`room_id`, `plat_id`)
 )
   DEFAULT CHARSET = utf8;

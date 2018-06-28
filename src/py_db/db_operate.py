@@ -1057,9 +1057,10 @@ class DbOperator(object):
             return -1, 'Internal error'
 
     @classmethod
-    def insert_one_room(cls, user_id, room_name, room_pwd, rooter_name, rooter_pwd, wifi_name, wifi_pwd,
-                        electric_date, electric_fee, water_date, water_fee, gas_date, gas_fee, net_date, net_fee,
-                        room_desc):
+    def insert_one_room(cls, user_id, room_name, sale_plat, room_pwd_date, room_pwd,
+                        rooter_name, rooter_pwd, wifi_name, wifi_pwd, electric_date,
+                        electric_fee, water_date, water_fee, gas_date, gas_fee,
+                        net_date, net_fee, room_desc):
         try:
             session = sessionmaker(bind=cls.engine)()
             with Defer(session.close):
@@ -1071,6 +1072,7 @@ class DbOperator(object):
                 # insert base info
                 room = Rooms()
                 room.room_name = room_name
+                room.room_pwd_date = datetime.datetime.strptime(room_pwd_date, '%Y-%m-%d').date()
                 room.room_pwd = room_pwd
                 room.rooter_name = rooter_name
                 room.rooter_pwd = rooter_pwd
@@ -1093,6 +1095,14 @@ class DbOperator(object):
                 relate.room_id = room.id
                 session.add(relate)
                 session.flush()
+
+                plat_id_list = sale_plat.split(',')
+                for plat_id in plat_id_list:
+                    sale = Sales()
+                    sale.room_id = room.id
+                    sale.plat_id = plat_id
+                    session.add(sale)
+                    session.flush()
                 session.commit()
                 return 0, 'OK'
         except:
@@ -1160,3 +1170,75 @@ class DbOperator(object):
             a_dict['content'] = list()
             a_dict['item_count'] = 0
             return json.dumps(a_dict)
+
+    @classmethod
+    def query_plats(cls):
+        try:
+            a_dict = dict()
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                values = session.query(Plats.id, Plats.plat_name)
+                a_list = list()
+                for value in values:
+                    item = dict()
+                    a_list.append(item)
+                    item['id'] = value.id
+                    item['plat_name'] = value.plat_name
+                a_dict['code'] = 0
+                a_dict['content'] = a_list
+                a_dict['msg'] = 'OK'
+                return json.dumps(a_dict, ensure_ascii=False)
+        except:
+            Logger.error(traceback.format_exc())
+            a_dict = dict()
+            a_dict['code'] = -1
+            a_dict['content'] = list()
+            a_dict['msg'] = 'Internal error'
+            return json.dumps(a_dict, ensure_ascii=False)
+
+    @classmethod
+    def query_room_state(cls, room_id, start_dt, end_dt):
+        try:
+            all_plat_states = dict()
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                sale_query = session.query(Plats.id,
+                                           Plats.plat_name).join(
+                    Sales, Sales.plat_id == Plats.id).filter(
+                    Sales.room_id == room_id)
+                for value in sale_query:
+                    a_plat_state = dict()
+                    all_plat_states['plat_id'] = a_plat_state
+                    a_plat_state['plat_name'] = value.plat_name
+                    a_plat_state['state'] = dict()
+
+                start_date = datetime.datetime.strptime(start_dt, '%Y-%m-%d').date()
+                end_date = datetime.datetime.strptime(end_dt, '%Y-%m-%d').date()
+                state_query = session.query(States.plat_id,
+                                            States.day,
+                                            States.state
+                                            ).filter(
+                    States.room_id == room_id).filter(
+                    and_(States.day >= start_date,
+                         States.day <= end_date))
+                for value in state_query:
+                    plat_id = value.plat_id
+                    day = value.day.strftime('%Y-%m-%d')
+                    state = value.state
+                    a_plat_state = all_plat_states.get(plat_id, None)
+                    if not a_plat_state:
+                        continue
+                    a_plat_state['state'][day] = state
+
+                a_dict = dict()
+                a_dict['code'] = 0
+                a_dict['content'] = all_plat_states
+                a_dict['msg'] = 'OK'
+                return json.dumps(a_dict, ensure_ascii=False)
+        except:
+            Logger.error(traceback.format_exc())
+            a_dict = dict()
+            a_dict['code'] = -1
+            a_dict['content'] = None
+            a_dict['msg'] = 'Internal error'
+            return json.dumps(a_dict, ensure_ascii=False)

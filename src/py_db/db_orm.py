@@ -26,6 +26,7 @@ class Rooms(Base):
     __tablename__ = 'rooms'
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_name = Column(String(128))
+    room_pwd_date = Column(Date)
     room_pwd = Column(String(128))
     rooter_name = Column(String(128))
     rooter_pwd = Column(String(128))
@@ -72,6 +73,28 @@ class Relates(Base):
     room_id = Column(Integer)
     create_time = Column(TIMESTAMP, default=func.now())
     UniqueConstraint('user_id', 'room_id')
+
+
+# Sales
+class Sales(Base):
+    __tablename__ = 'sales'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    room_id = Column(Integer)
+    plat_id = Column(Integer)
+    create_time = Column(TIMESTAMP, default=func.now())
+    UniqueConstraint('room_id', 'plat_id')
+
+
+# States
+class States(Base):
+    __tablename__ = 'states'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    room_id = Column(Integer)
+    plat_id = Column(Integer)
+    day = Column(Date)
+    state = Column(Integer)
+    create_time = Column(TIMESTAMP, default=func.now())
+    UniqueConstraint('room_id', 'plat_id', 'day')
 
 
 
