@@ -1207,9 +1207,10 @@ class DbOperator(object):
                     Sales, Sales.plat_id == Plats.id).filter(
                     Sales.room_id == room_id)
                 for value in sale_query:
-                    a_plat_state = dict()
-                    all_plat_states['plat_id'] = a_plat_state
-                    a_plat_state['plat_name'] = value.plat_name
+                    plat_id = value.id
+                    plat_name = value.plat_name
+                    all_plat_states[plat_id] = a_plat_state = dict()
+                    a_plat_state['plat_name'] = plat_name
                     a_plat_state['state'] = dict()
 
                 start_date = datetime.datetime.strptime(start_dt, '%Y-%m-%d').date()

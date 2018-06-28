@@ -85,21 +85,32 @@ function batch_select_date(plat_id, start_dt, end_dt) {
 }
 
 function init_datetime_picker() {
-    var when = new Date();
+    var now = new Date();
 
     $('#electric_date').datepicker({
         language: 'zh-CN',
         autoclose: true,
         todayHighlight: true
     });
-    $("#start_date").datepicker('setDate', when);
+    $("#start_date").datepicker('setDate', now);
 
     $('#water_date').datepicker({
         language: 'zh-CN',
         autoclose: true,
         todayHighlight: true
     });
+    var when = new Date();
+    when.setDate(now.getDate() + 90);
     $("#end_date").datepicker('setDate', when);
+}
+
+function get_date_from_picker(picker_id) {
+    var when = $(picker_id).datepicker('getDate');
+    var year = when.getFullYear();
+    var month = when.getMonth() + 1;
+    var day = when.getDate();
+    var fmt = year + "-" + month + "-" + day;
+    return fmt;
 }
 
 function init_room_state() {
@@ -108,8 +119,8 @@ function init_room_state() {
         type: 'get',
         data: {
             room_id: 4,
-            start_dt: '2018-06-28',
-            end_dt: '2018-07-01'
+            start_dt: get_date_from_picker('#start_date'),
+            end_dt: get_date_from_picker('#end_date')
         },
         dataType: 'json',
         success: function (response) {
@@ -126,7 +137,12 @@ function init_room_state() {
 }
 
 function init_room_state_callback(response) {
-    console.log(response);
+    if (response.code !== 0) {
+        console.log('error');
+        return;
+    }
+
+    var content = response.content;
 }
 
 $(document).on('click', '#save_state_info', function () {
