@@ -1004,8 +1004,8 @@ class RoomState(BaseHandler):
         Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
         room_id = self.get_argument('room_id')
         states = self.get_argument('states')
-        
-
+        json_text = DbOperator.save_room_states(room_id, states)
+        self.write(json_text)
 
 
 class Captcha(tornado.web.RequestHandler):

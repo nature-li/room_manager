@@ -1243,3 +1243,32 @@ class DbOperator(object):
             a_dict['content'] = None
             a_dict['msg'] = 'Internal error'
             return json.dumps(a_dict, ensure_ascii=False)
+
+    @classmethod
+    def save_room_states(cls, room_id, state_json):
+        try:
+            states = json.loads(state_json)
+            a_list = list()
+            for plat_dt, state in states.items():
+                twice = plat_dt.split('_')
+                plat_id = twice[0]
+                dt = twice[1]
+                a_list.append((room_id, plat_id, dt, state))
+
+            values = '(1, 2, "2018-09-01", 1)'
+            sql = 'INSERT INTO states(room_id, plat_id, day, state) VALUES ' + values + ' ON DUPLICATE KEY UPDATE state=VALUES(state)'
+            Logger.info(sql)
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                session.execute(sql, a_list)
+                session.commit()
+                a_dict = dict()
+                a_dict['code'] = 0
+                a_dict['msg'] = 'OK'
+                return json.dumps(a_dict, ensure_ascii=False)
+        except:
+            Logger.error(traceback.format_exc())
+            a_dict = dict()
+            a_dict['code'] = -1
+            a_dict['msg'] = 'Internal error'
+            return json.dumps(a_dict, ensure_ascii=False)
