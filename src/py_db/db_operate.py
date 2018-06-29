@@ -13,6 +13,7 @@ from urllib import quote_plus as urlquote
 from py_log.logger import Logger
 from config.config import Config
 from db_orm import *
+import MySQLdb
 
 
 class Defer(object):
@@ -1253,19 +1254,19 @@ class DbOperator(object):
                 twice = plat_dt.split('_')
                 plat_id = twice[0]
                 dt = twice[1]
-                a_list.append((room_id, plat_id, dt, state))
+                a_list.append([room_id, plat_id, dt, state])
 
-            values = '(1, 2, "2018-09-01", 1)'
-            sql = 'INSERT INTO states(room_id, plat_id, day, state) VALUES ' + values + ' ON DUPLICATE KEY UPDATE state=VALUES(state)'
-            Logger.info(sql)
-            session = sessionmaker(bind=cls.engine)()
-            with Defer(session.close):
-                session.execute(sql, a_list)
-                session.commit()
-                a_dict = dict()
-                a_dict['code'] = 0
-                a_dict['msg'] = 'OK'
-                return json.dumps(a_dict, ensure_ascii=False)
+            sql = 'INSERT INTO states(room_id, plat_id, day, state) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE state=VALUES(state)'
+            conn = MySQLdb.connect(host=Config.DB_HOST, port=Config.DB_PORT, user=Config.DB_USER, passwd=Config.DB_PWD, db=Config.DB_NAME)
+            with Defer(conn.close):
+                cursor = conn.cursor()
+                with Defer(cursor.close):
+                    cursor.executemany(sql, a_list)
+                    conn.commit()
+            a_dict = dict()
+            a_dict['code'] = 0
+            a_dict['msg'] = 'OK'
+            return json.dumps(a_dict, ensure_ascii=False)
         except:
             Logger.error(traceback.format_exc())
             a_dict = dict()
