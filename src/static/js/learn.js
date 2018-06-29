@@ -1,8 +1,8 @@
-x = [];
-x.name = 1;
-x.age = 23;
+var x = new Date();
 
+var y = new Date();
+y.setDate(y.getDate() + 1);
 
-Object.keys(x).forEach(function(k){
-    console.log(k + ' - ' + x[k]);
-});
+console.log(y.getTime());
+console.log(x.getTime());
+console.log(y.getTime() - x.getTime());

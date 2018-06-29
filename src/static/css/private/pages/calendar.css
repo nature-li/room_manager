@@ -1,6 +1,7 @@
 .div_table {
     display: table;
     border-collapse: collapse;
+    border: 1px solid #ccc;
 }
 
 .div_row {
@@ -14,7 +15,7 @@
 .week_box {
     width: 120px;
     text-align: center;
-    border-bottom: 1px solid #ccc;
+    border: 1px solid #ccc;
 }
 
 .date_box {
@@ -40,7 +41,7 @@
     border: 1px solid #ccc;
     position: relative;
     cursor: pointer;
-    background-color: lightyellow;
+    /*background-color: lightyellow;*/
 }
 
 .empty_plat_box {
@@ -73,5 +74,5 @@
 
 .selected_cell {
     background-color: lightpink;
-    color: green;
+    /*color: green;*/
 }

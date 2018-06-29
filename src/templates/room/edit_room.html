@@ -7,22 +7,22 @@
 <link href="/static/css/bootstrap-dialog/bootstrap-dialog.min.css" rel="stylesheet">
 
 <!-- Custom CSS -->
+<link href="/static/css/bootstrap-select/bootstrap-select.css" rel="stylesheet">
+<link href="/static/css/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet">
 <link href="/static/css/private/left/simple-sidebar.css" rel="stylesheet">
 <link href="/static/css/private/left/align.css" rel="stylesheet">
 <link href="/static/css/private/pages/monitor.css" rel="stylesheet">
 <link href="/static/css/private/pages/calendar.css" rel="stylesheet">
-<link href="/static/css/bootstrap-select/bootstrap-select.css" rel="stylesheet">
-<link href="/static/css/bootstrap-datepicker/bootstrap-datepicker.css" rel="stylesheet">
 
 <!-- Bootstrap Core JS -->
 <script src="/static/js/jquery.js"></script>
 <script src="/static/js/jquery.cookie.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/bootstrap-select/bootstrap-select.js"></script>
-<script src="/static/js/bootstrap-dialog/bootstrap-dialog.min.js"></script>
 <script src="/static/js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <script src="/static/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
 <script src="/static/js/moment/moment-with-locales.js"></script>
+<script src="/static/js/bootstrap-select/bootstrap-select.js"></script>
+<script src="/static/js/bootstrap-dialog/bootstrap-dialog.min.js"></script>
 {% end %}
 
 {% block room_list_menu %}
@@ -76,207 +76,129 @@ chosen-menu
 {% block body_content %}
 <div class="container">
     <!--<div class="col-xs-12">-->
-        <!--<label>基本信息</label>-->
+    <!--<label>基本信息</label>-->
     <!--</div>-->
     <!--<div>-->
-        <!--<form>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span for="room_name">客房名称:</span><span class="red_label">*</span>-->
-                <!--<input id="room_name" class="form-control"/>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>客房密码:</span>-->
-                <!--<input id="room_pwd" class="form-control"/>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>路由器账号:</span>-->
-                <!--<input id="rooter_name" class="form-control"/>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>路由器密码:</span>-->
-                <!--<input id="rooter_pwd" class="form-control"/>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>Wi-Fi账号:</span>-->
-                <!--<input id="wifi_name" class="form-control"/>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>Wi-Fi密码:</span>-->
-                <!--<input id="wifi_pwd" class="form-control"/>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>电费日期:</span>-->
-                <!--<div class='input-group date' id='electric_date'>-->
-                    <!--<input class="form-control" readonly/>-->
-                    <!--<span class="input-group-addon">-->
+    <!--<form>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span for="room_name">客房名称:</span><span class="red_label">*</span>-->
+    <!--<input id="room_name" class="form-control"/>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>客房密码:</span>-->
+    <!--<input id="room_pwd" class="form-control"/>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>路由器账号:</span>-->
+    <!--<input id="rooter_name" class="form-control"/>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>路由器密码:</span>-->
+    <!--<input id="rooter_pwd" class="form-control"/>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>Wi-Fi账号:</span>-->
+    <!--<input id="wifi_name" class="form-control"/>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>Wi-Fi密码:</span>-->
+    <!--<input id="wifi_pwd" class="form-control"/>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>电费日期:</span>-->
+    <!--<div class='input-group date' id='electric_date'>-->
+    <!--<input class="form-control" readonly/>-->
+    <!--<span class="input-group-addon">-->
     <!--<span class="glyphicon glyphicon-calendar"></span>-->
     <!--</span>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>电费余额:</span>-->
-                <!--<input id="electric_fee" type="number" class="form-control" value="0"/>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>水费日期:</span>-->
-                <!--<div class='input-group date' id='water_date'>-->
-                    <!--<input class="form-control" readonly/>-->
-                    <!--<span class="input-group-addon">-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>电费余额:</span>-->
+    <!--<input id="electric_fee" type="number" class="form-control" value="0"/>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>水费日期:</span>-->
+    <!--<div class='input-group date' id='water_date'>-->
+    <!--<input class="form-control" readonly/>-->
+    <!--<span class="input-group-addon">-->
     <!--<span class="glyphicon glyphicon-calendar"></span>-->
     <!--</span>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>水费余额:</span>-->
-                <!--<input id="water_fee" type="number" class="form-control" value="0"/>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>燃气费日期:</span>-->
-                <!--<div class='input-group date' id='gas_date'>-->
-                    <!--<input class="form-control" readonly/>-->
-                    <!--<span class="input-group-addon">-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>水费余额:</span>-->
+    <!--<input id="water_fee" type="number" class="form-control" value="0"/>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>燃气费日期:</span>-->
+    <!--<div class='input-group date' id='gas_date'>-->
+    <!--<input class="form-control" readonly/>-->
+    <!--<span class="input-group-addon">-->
     <!--<span class="glyphicon glyphicon-calendar"></span>-->
     <!--</span>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>燃气费余额:</span>-->
-                <!--<input id="gas_fee" type="number" class="form-control" value="0"/>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>网费日期:</span>-->
-                <!--<div class='input-group date' id='net_date'>-->
-                    <!--<input class="form-control" readonly/>-->
-                    <!--<span class="input-group-addon">-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>燃气费余额:</span>-->
+    <!--<input id="gas_fee" type="number" class="form-control" value="0"/>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>网费日期:</span>-->
+    <!--<div class='input-group date' id='net_date'>-->
+    <!--<input class="form-control" readonly/>-->
+    <!--<span class="input-group-addon">-->
     <!--<span class="glyphicon glyphicon-calendar"></span>-->
     <!--</span>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
-                <!--<span>网费余额:</span>-->
-                <!--<input id="net_fee" type="number" class="form-control" value="0"/>-->
-            <!--</div>-->
-        <!--</form>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="form-group col-xs-5 col-xs-offset-1">-->
+    <!--<span>网费余额:</span>-->
+    <!--<input id="net_fee" type="number" class="form-control" value="0"/>-->
+    <!--</div>-->
+    <!--</form>-->
     <!--</div>-->
     <!--<div class="col-xs-12 col-xs-offset-1">-->
-        <!--<button id="save_basic_info" type="button" class="btn btn-primary">保存</button>-->
+    <!--<button id="save_basic_info" type="button" class="btn btn-primary">保存</button>-->
     <!--</div>-->
     <!--<div class="col-xs-12">-->
-        <!--<hr/>-->
+    <!--<hr/>-->
     <!--</div>-->
     <div class="col-xs-12">
         <label>房态信息</label>
     </div>
     <div class="col-xs-offset-1">
-        <div class="form-group col-xs-3">
+        <div class="form-group col-xs-4">
             <span>开始日期:</span>
             <div class='input-group date' id='start_date'>
                 <input class="form-control" readonly/>
                 <span class="input-group-addon">
-    <span class="glyphicon glyphicon-calendar"></span>
-    </span>
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
             </div>
         </div>
-        <div class="form-group col-xs-3">
+        <div class="form-group col-xs-4">
             <span>结束日期:</span>
             <div class='input-group date' id='end_date'>
-                <input class="form-control" readonly/>
+                <input  class="form-control" readonly/>
                 <span class="input-group-addon">
-    <span class="glyphicon glyphicon-calendar"></span>
-    </span>
-            </div>
-        </div>
-    </div>
-    <div class="col-xs-12">
-        <br/>
-    </div>
-    <div class="col-xs-12 col-xs-offset-1">
-        <div id="calendar" class="div_table">
-            <div class="div_row">
-                <div class="week_box div_cell"><span>日</span></div>
-                <div class="week_box div_cell"><span>一</span></div>
-                <div class="week_box div_cell"><span>二</span></div>
-                <div class="week_box div_cell"><span>三</span></div>
-                <div class="week_box div_cell"><span>四</span></div>
-                <div class="week_box div_cell"><span>五</span></div>
-                <div class="week_box div_cell"><span>六</span></div>
-            </div>
-            <div class="div_row">
-                <div class="empty_date_box div_cell"></div>
-                <div class="empty_date_box div_cell"></div>
-                <div class="date_box div_cell"><span>2018-06-04</span></div>
-                <div class="date_box div_cell"><span>2018-06-05</span></div>
-                <div class="date_box div_cell"><span>2018-06-06</span></div>
-                <div class="date_box div_cell"><span>2018-06-07</span></div>
-                <div class="date_box div_cell"><span>2018-06-08</span></div>
-            </div>
-            <div class="div_row">
-                <div class="empty_plat_box div_cell"><span></span></div>
-                <div class="empty_plat_box div_cell"><span></span></div>
-                <div id="1_2018-06-04" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-                <div id="1_2018-06-05" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-                <div id="1_2018-06-06" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-                <div id="1_2018-06-07" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-                <div id="1_2018-06-08" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-            </div>
-            <div class="div_row">
-                <div class="empty_plat_box div_cell"><span></span></div>
-                <div class="empty_plat_box div_cell"><span></span></div>
-                <div id="2_2018-06-04" class="plat_box div_cell click_cell"><span>小猪</span></div>
-                <div id="2_2018-06-05" class="plat_box div_cell click_cell"><span>小猪</span></div>
-                <div id="2_2018-06-06" class="plat_box div_cell click_cell"><span>小猪</span></div>
-                <div id="2_2018-06-07" class="plat_box div_cell click_cell"><span>小猪</span></div>
-                <div id="2_2018-06-08" class="plat_box div_cell click_cell"><span>小猪</span></div>
-            </div>
-            <div class="div_row">
-                <div class="empty_plat_box div_cell"><span></span></div>
-                <div class="empty_plat_box div_cell"><span></span></div>
-                <div id="3_2018-06-04" class="plat_box div_cell click_cell"><span>途家</span></div>
-                <div id="3_2018-06-05" class="plat_box div_cell click_cell"><span>途家</span></div>
-                <div id="3_2018-06-06" class="plat_box div_cell click_cell"><span>途家</span></div>
-                <div id="3_2018-06-07" class="plat_box div_cell click_cell"><span>途家</span></div>
-                <div id="3_2018-06-08" class="plat_box div_cell click_cell"><span>途家</span></div>
-            </div>
-            <div class="div_row">
-                <div class="date_box div_cell"><span>2018-06-09</span></div>
-                <div class="date_box div_cell"><span>2018-06-10</span></div>
-                <div class="date_box div_cell"><span>2018-06-11</span></div>
-                <div class="date_box div_cell"><span>2018-06-12</span></div>
-                <div class="date_box div_cell"><span>2018-06-13</span></div>
-                <div class="date_box div_cell"><span>2018-06-14</span></div>
-                <div class="date_box div_cell"><span>2018-06-15</span></div>
-            </div>
-            <div class="div_row">
-                <div id="1_2018-06-09" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-                <div id="1_2018-06-10" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-                <div id="1_2018-06-11" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-                <div id="1_2018-06-12" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-                <div id="1_2018-06-13" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-                <div id="1_2018-06-14" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-                <div id="1_2018-06-15" class="plat_box div_cell click_cell"><span>迎彼</span></div>
-            </div>
-            <div class="div_row">
-                <div id="2_2018-06-09" class="plat_box div_cell click_cell"><span>小猪</span></div>
-                <div id="2_2018-06-10" class="plat_box div_cell click_cell"><span>小猪</span></div>
-                <div id="2_2018-06-11" class="plat_box div_cell click_cell"><span>小猪</span></div>
-                <div id="2_2018-06-12" class="plat_box div_cell click_cell"><span>小猪</span></div>
-                <div id="2_2018-06-13" class="plat_box div_cell click_cell"><span>小猪</span></div>
-                <div id="2_2018-06-14" class="plat_box div_cell click_cell"><span>小猪</span></div>
-                <div id="2_2018-06-15" class="plat_box div_cell click_cell"><span>小猪</span></div>
-            </div>
-            <div class="div_row">
-                <div id="3_2018-06-09" class="plat_box div_cell click_cell"><span>途家</span></div>
-                <div id="3_2018-06-10" class="plat_box div_cell click_cell"><span>途家</span></div>
-                <div id="3_2018-06-11" class="plat_box div_cell click_cell"><span>途家</span></div>
-                <div id="3_2018-06-12" class="plat_box div_cell click_cell"><span>途家</span></div>
-                <div id="3_2018-06-13" class="plat_box div_cell click_cell"><span>途家</span></div>
-                <div id="3_2018-06-14" class="plat_box div_cell click_cell"><span>途家</span></div>
-                <div id="3_2018-06-15" class="plat_box div_cell click_cell"><span>途家</span></div>
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
             </div>
         </div>
     </div>
     <div class="col-xs-12 col-xs-offset-1">
         <hr/>
+    </div>
+
+    <div class="col-xs-12 col-xs-offset-1">
+        <div id="calendar" class="div_table">
+        </div>
+    </div>
+    <div class="col-xs-12 col-xs-offset-1">
+        <hr/>
+    </div>
+    <div class="col-xs-12 col-xs-offset-1">
         <button id="save_state_info" type="button" class="btn btn-primary">保存</button>
     </div>
 </div>

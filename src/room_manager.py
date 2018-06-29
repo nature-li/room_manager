@@ -998,19 +998,14 @@ class RoomState(BaseHandler):
         self.write(json_text)
 
     def post(self):
-        pass
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
+        room_id = self.get_argument('room_id')
+        states = self.get_argument('states')
+        
 
-    def put(self):
-        pass
-
-    def delete(self):
-        pass
-
-    def head(self, *args, **kwargs):
-        pass
-
-    def options(self, *args, **kwargs):
-        pass
 
 
 class Captcha(tornado.web.RequestHandler):
