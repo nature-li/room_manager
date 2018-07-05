@@ -1023,6 +1023,39 @@ class Captcha(tornado.web.RequestHandler):
         self.write(json.dumps(a_dict, ensure_ascii=False))
 
 
+class Order(BaseHandler):
+    def get(self, *args, **kwargs):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
+        room_id = self.get_argument('room_id', None)
+        room_name = DbOperator.query_room_by_id(room_id)
+        if not room_name:
+            self.render('404.html')
+            return
+        self.render('order/add_order.html', login_user=login_user, room_id=room_id, room_name=room_name)
+
+    def post(self, *args, **kwargs):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
+        room_id = self.get_argument('room_id')
+        plat_id = self.get_argument('plat_id')
+        checkin_date = self.get_argument('check_in_date')
+        checkout_date = self.get_argument('check_out_date')
+        user_name = self.get_argument('user_name')
+        order_fee = self.get_argument('order_fee')
+        person_count = self.get_argument('person_count')
+        phone = self.get_argument('phone')
+        wechat = self.get_argument('wechat')
+        order_desc = self.get_argument('order_desc')
+        json_text = DbOperator.insert_one_order(room_id, plat_id, checkin_date, checkout_date, user_name, order_fee, person_count, phone, wechat, order_desc)
+        self.write(json_text)
+
+
+
 class LogFormatter(tornado.log.LogFormatter):
     def __init__(self):
         super(LogFormatter, self).__init__(
@@ -1100,6 +1133,7 @@ def __main__():
             (r'/edit_room', EditRoom),
             (r'/room_state', RoomState),
             (r'/captcha', Captcha),
+            (r'/order', Order),
         ],
         cookie_secret=Config.LOGIN_COOKIE_SECRET,
         template_path=os.path.join(os.path.dirname(__file__), "templates"),

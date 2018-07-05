@@ -2,7 +2,7 @@
 # coding: utf-8
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, BigInteger, Float, TIMESTAMP, UniqueConstraint, Date
+from sqlalchemy import Column, Integer, String, BigInteger, Float, TIMESTAMP, UniqueConstraint, Date, DateTime
 from sqlalchemy.sql import func
 
 Base = declarative_base()
@@ -97,4 +97,19 @@ class States(Base):
     UniqueConstraint('room_id', 'plat_id', 'day')
 
 
+# Orders
+class Orders(Base):
+    __tablename__ = 'orders'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    room_id = Column(Integer)
+    plat_id = Column(Integer)
+    user_name = Column(String(64))
+    order_fee = Column(Float)
+    check_in = Column(Date)
+    check_out = Column(Date)
+    person_count = Column(Integer, nullable=True)
+    phone = Column(String(32), nullable=True)
+    wechat = Column(String(64), nullable=True)
+    desc = Column(String(1024), nullable=True)
+    UniqueConstraint('room_id', 'check_in', 'check_out')
 

@@ -23,8 +23,8 @@
     height: 28px;
     border: 1px solid #ccc;
     position: relative;
-    background-color: lightblue;
-    color: green;
+    background-color: lightyellow;
+    /*color: green;*/
 }
 
 .empty_date_box {

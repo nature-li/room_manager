@@ -1273,3 +1273,43 @@ class DbOperator(object):
             a_dict['code'] = -1
             a_dict['msg'] = 'Internal error'
             return json.dumps(a_dict, ensure_ascii=False)
+
+    @classmethod
+    def query_room_by_id(cls, room_id):
+        try:
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                value = session.query(Rooms.room_name).filter(Rooms.id == room_id).first()
+                if value is not None:
+                    return value.room_name
+        except:
+            Logger.error(traceback.format_exc())
+
+    @classmethod
+    def insert_one_order(cls, room_id, plat_id, checkin_date, checkout_date, user_name, order_fee, person_count, phone, wechat, order_desc):
+        try:
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                order = Orders()
+                order.room_id = room_id
+                order.plat_id = plat_id
+                order.user_name = user_name
+                order.order_fee = order_fee
+                order.check_in = datetime.datetime.strptime(checkin_date, '%Y-%m-%d').date()
+                order.check_out = datetime.datetime.strptime(checkout_date, '%Y-%m-%d').date()
+                order.person_count = person_count
+                order.phone = phone
+                order.wechat = wechat
+                order.desc = order_desc
+                session.add(order)
+                session.commit()
+                a_dict = dict()
+                a_dict['code'] = 0
+                a_dict['msg'] = 'Success'
+                return json.dumps(a_dict, ensure_ascii=False)
+        except:
+            Logger.error(traceback.format_exc())
+            a_dict = dict()
+            a_dict['code'] = -1
+            a_dict['msg'] = 'Internal error'
+            return json.dumps(a_dict, ensure_ascii=False)

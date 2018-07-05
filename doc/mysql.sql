@@ -88,3 +88,22 @@ CREATE TABLE IF NOT EXISTS `sales` (
   UNIQUE KEY `room_plat_id` (`room_id`, `plat_id`)
 )
   DEFAULT CHARSET = utf8;
+
+
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE IF NOT EXISTS `orders` (
+  `id`           INT           NOT NULL AUTO_INCREMENT,
+  `room_id`      INT           NOT NULL,
+  `plat_id`      INT           NOT NULL,
+  `user_name`    VARCHAR(64)   NOT NULL,
+  `check_in`     DATE          NOT NULL,
+  `check_out`    DATE          NOT NULL,
+  `order_fee`    FLOAT         NOT NULL,
+  `person_count` INT           NULL,
+  `phone`        VARCHAR(32)   NULL,
+  `wechat`       VARCHAR(64)   NULL,
+  `desc`         VARCHAR(1024) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `plat_check` (`room_id`, `check_in`, `check_out`)
+)
+  DEFAULT CHARSET = utf8;
