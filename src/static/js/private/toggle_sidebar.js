@@ -79,7 +79,7 @@ $("#room_list_menu").click(function () {
 
 // 点击订单列表
 $("#order_list_menu").click(function () {
-    window.location.replace("/order");
+    window.location.replace("/order_list");
 });
 
 // 点击导航树父级菜单

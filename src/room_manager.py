@@ -1023,6 +1023,14 @@ class Captcha(tornado.web.RequestHandler):
         self.write(json.dumps(a_dict, ensure_ascii=False))
 
 
+class OrderList(BaseHandler):
+    def get(self, *args, **kwargs):
+        login_user = self.get_login_user()
+        if not login_user:
+            return
+        Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
+        self.render('order/order_list.html', login_user=login_user)
+
 class Order(BaseHandler):
     def get(self, *args, **kwargs):
         login_user = self.get_login_user()
@@ -1134,6 +1142,7 @@ def __main__():
             (r'/room_state', RoomState),
             (r'/captcha', Captcha),
             (r'/order', Order),
+            (r'/order_list', OrderList),
         ],
         cookie_secret=Config.LOGIN_COOKIE_SECRET,
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
