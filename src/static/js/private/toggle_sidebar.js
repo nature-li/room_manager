@@ -88,9 +88,12 @@ $(".side_bar_menu_link").click(function () {
 
     $(this).closest(".sidebar-nav").find(".side_bar_menu_children").each(function () {
         var $parent = $(this).closest(".side_bar_menu_group").find(".side_bar_parent_arrow");
-        $parent.removeClass("glyphicon-chevron-down");
-        $parent.addClass("glyphicon-chevron-right");
-        $(this).hide(200);
+
+        if (!$(this).is($child)) {
+            $parent.removeClass("glyphicon-chevron-down");
+            $parent.addClass("glyphicon-chevron-right");
+            $(this).hide(200);
+        }
     });
 
     $(this).closest(".sidebar-nav").find(".side_bar_menu_children").each(function () {
