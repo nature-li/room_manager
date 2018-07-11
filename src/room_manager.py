@@ -1029,7 +1029,17 @@ class OrderList(BaseHandler):
         if not login_user:
             return
         Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
-        self.render('order/order_list.html', login_user=login_user)
+
+        api = self.get_argument("api", None)
+        if not api:
+            self.render('order/order_list.html', login_user=login_user)
+            return
+        room_name = self.get_argument("room_name", None)
+        off_set = self.get_argument("off_set", None)
+        limit = self.get_argument("limit", None)
+        json_text = DbOperator.query_order_list(room_name, off_set, limit)
+        self.write(json_text)
+
 
 class Order(BaseHandler):
     def get(self, *args, **kwargs):
@@ -1059,9 +1069,9 @@ class Order(BaseHandler):
         phone = self.get_argument('phone')
         wechat = self.get_argument('wechat')
         order_desc = self.get_argument('order_desc')
-        json_text = DbOperator.insert_one_order(room_id, plat_id, checkin_date, checkout_date, user_name, order_fee, person_count, phone, wechat, order_desc)
+        json_text = DbOperator.insert_one_order(room_id, plat_id, checkin_date, checkout_date, user_name, order_fee, person_count, phone, wechat,
+                                                order_desc)
         self.write(json_text)
-
 
 
 class LogFormatter(tornado.log.LogFormatter):

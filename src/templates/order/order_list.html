@@ -68,10 +68,10 @@ chosen-menu
 
             <form class="navbar-form navbar-right" style="width: 350px">
                 <div class="form-group" style="width: 80%">
-                    <input id="search_machine" class="form-control" placeholder="搜索客房名称"
+                    <input id="search_room_name" class="form-control" placeholder="搜索客房名称"
                            style="width: 100%">
                 </div>
-                <button id="search_room_name" type="button" class="btn btn-default">查询</button>
+                <button id="search_room_name_btn" type="button" class="btn btn-default">查询</button>
             </form>
         </div>
     </div>
@@ -80,18 +80,20 @@ chosen-menu
 
 
 {% block body_content %}
-<table id="start_history_result" class="table table-striped table-bordered table-hover">
+<table id="order_list_result" class="table table-striped table-bordered table-hover">
     <thead>
     <tr>
         <th class="td-middle">ID</th>
         <th class="td-middle">客房名称</th>
         <th class="td-middle">平台名称</th>
         <th class="td-middle">房客姓名</th>
+        <th class="td-middle">入住人数</th>
         <th class="td-middle">入住时间</th>
         <th class="td-middle">离开时间</th>
         <th class="td-middle">订单金额</th>
         <th class="td-middle">电话号码</th>
         <th class="td-middle">微信号</th>
+        <th class="td-middle">详情</th>
     </tr>
     </thead>
     <tbody>

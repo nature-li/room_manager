@@ -1313,3 +1313,64 @@ class DbOperator(object):
             a_dict['code'] = -1
             a_dict['msg'] = 'Internal error'
             return json.dumps(a_dict, ensure_ascii=False)
+
+    @classmethod
+    def query_order_list(cls, room_name, off_set, limit):
+        try:
+            off_set = int(off_set)
+            limit = int(limit)
+            if limit == -1:
+                limit_count = None
+            else:
+                limit_count = off_set + limit
+
+            a_dict = dict()
+            session = sessionmaker(bind=cls.engine)()
+            with Defer(session.close):
+                query = session.query(Orders.id,
+                                      Orders.room_id,
+                                      Rooms.room_name,
+                                      Orders.plat_id,
+                                      Plats.plat_name,
+                                      Orders.user_name,
+                                      Orders.order_fee,
+                                      Orders.check_in,
+                                      Orders.check_out,
+                                      Orders.person_count,
+                                      Orders.phone,
+                                      Orders.wechat).join(
+                    Rooms, Rooms.id == Orders.room_id).join(
+                    Plats, Plats.id == Orders.plat_id)
+                if room_name:
+                    room_condition = '%' + room_name + '%'
+                    query = query.filter(Rooms.room_name.like(room_condition))
+                query = query.order_by(Orders.check_in.desc())
+                values = query[off_set: limit_count]
+
+                a_list = list()
+                for value in values:
+                    item = dict()
+                    a_list.append(item)
+                    item['id'] = value.id
+                    item['room_id'] = value.room_id
+                    item['room_name'] = value.room_name
+                    item['plat_id'] = value.plat_id
+                    item['plat_name'] = value.plat_name
+                    item['user_name'] = value.user_name
+                    item['order_fee'] = value.order_fee
+                    item['check_in'] = value.check_in.strftime('%Y-%m-%d')
+                    item['check_out'] = value.check_out.strftime('%Y-%m-%d')
+                    item['person_count'] = value.person_count
+                    item['phone'] = value.phone
+                    item['wechat'] = value.wechat
+                a_dict['success'] = True
+                a_dict['content'] = a_list
+                a_dict['msg'] = 'OK'
+                return json.dumps(a_dict, ensure_ascii=False)
+        except:
+            Logger.error(traceback.format_exc())
+            a_dict = dict()
+            a_dict['success'] = False
+            a_dict['content'] = list()
+            a_dict['msg'] = 'Internal error'
+            return json.dumps(a_dict, ensure_ascii=False)

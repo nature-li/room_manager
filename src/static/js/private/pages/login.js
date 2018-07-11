@@ -97,7 +97,7 @@ function change_captcha() {
 }
 
 function get_captcha_callback(data) {
-    if (data.success != true) {
+    if (data.success !== true) {
         show_alert_msg("GET_CAPTCHA_FAILED");
         change_captcha();
         return
@@ -105,5 +105,6 @@ function get_captcha_callback(data) {
 
     var src = "data:image/png;base64," + data.value;
     $("#captcha_img").attr('src', src);
+    $("#captcha_value").val("");
 }
 
