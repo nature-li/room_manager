@@ -76,3 +76,35 @@ $("#personal_menu").click(function () {
 $("#room_list_menu").click(function () {
     window.location.replace("/room_list");
 });
+
+// 点击订单列表
+$("#order_list_menu").click(function () {
+    window.location.replace("/order");
+});
+
+// 点击导航树父级菜单
+$(".side_bar_menu_link").click(function () {
+    var $child = $(this).closest(".side_bar_menu_group").find(".side_bar_menu_children");
+
+    $(this).closest(".sidebar-nav").find(".side_bar_menu_children").each(function () {
+        var $parent = $(this).closest(".side_bar_menu_group").find(".side_bar_parent_arrow");
+
+        if ($(this).is($child)) {
+            console.log(93);
+            if ($parent.hasClass("glyphicon-chevron-down")) {
+                $parent.removeClass("glyphicon-chevron-down");
+                $parent.addClass("glyphicon-chevron-right");
+                $child.hide(200);
+            } else {
+                $parent.removeClass("glyphicon-chevron-right");
+                $parent.addClass("glyphicon-chevron-down");
+                $child.show(200);
+            }
+        } else {
+            console.log(104);
+            $parent.removeClass("glyphicon-chevron-down");
+            $parent.addClass("glyphicon-chevron-right");
+            $(this).hide(200);
+        }
+    });
+});
