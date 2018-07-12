@@ -156,3 +156,10 @@ $(document).on("click", ".hive-page-tail", function () {
     window.save_data.view_start_page_idx = pre_batch * window.save_data.view_max_page_count;
     query_and_update_view();
 });
+
+// 调整每页显示记录数
+$(document).on('change', "#record_count_per_page", function () {
+    reset_save_data();
+    window.save_data.view_item_count_per_page = $("#record_count_per_page").val();
+    query_and_update_view();
+});
