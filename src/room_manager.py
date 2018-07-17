@@ -879,10 +879,12 @@ class RoomList(BaseHandler):
             return
         Logger.info(json.dumps(self.request.arguments, ensure_ascii=False), self.request.uri)
         room_name = self.get_argument('room_name')
+        sort_column = self.get_argument("sort_column")
+        desc_order = self.get_argument("desc_order")
         off_set = self.get_argument("off_set")
         limit = self.get_argument("limit")
         user_id = self.get_secure_cookie('user_id')
-        text = DbOperator.query_room_list(user_id, room_name, off_set, limit)
+        text = DbOperator.query_room_list(user_id, room_name, sort_column, desc_order, off_set, limit)
         self.write(text)
 
 
@@ -1010,8 +1012,7 @@ class RoomState(BaseHandler):
 
 class Captcha(tornado.web.RequestHandler):
     def post(self):
-        chars = ['a', 'b', 'c', 'd', 'e', 'f', 'h', 'k', 'm', 'n', 'p', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
-                 '3', '4', '5', '6', '8']
+        chars = ['a', 'b', 'c', 'd', 'e', 'f', 'j', 'h', 'i', 'j' 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
         captcha_value = ''.join(random.sample(population=chars, k=4))
 
         image = ImageCaptcha(width=100, height=34, font_sizes=(28, 29, 30, 31, 32, 33))
@@ -1072,6 +1073,11 @@ class Order(BaseHandler):
         json_text = DbOperator.insert_one_order(room_id, plat_id, checkin_date, checkout_date, user_name, order_fee, person_count, phone, wechat,
                                                 order_desc)
         self.write(json_text)
+
+
+class DisHandler(BaseHandler):
+    def get(self, *args, **kwargs):
+        self.render('dis/dis.html')
 
 
 class LogFormatter(tornado.log.LogFormatter):
@@ -1153,6 +1159,7 @@ def __main__():
             (r'/captcha', Captcha),
             (r'/order', Order),
             (r'/order_list', OrderList),
+            (r'/dis', DisHandler),
         ],
         cookie_secret=Config.LOGIN_COOKIE_SECRET,
         template_path=os.path.join(os.path.dirname(__file__), "templates"),

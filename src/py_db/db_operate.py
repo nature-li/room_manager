@@ -1111,7 +1111,7 @@ class DbOperator(object):
             return -1, 'Internal error'
 
     @classmethod
-    def query_room_list(cls, user_id, room_name, off_set, limit):
+    def query_room_list(cls, user_id, room_name, sort_column, desc_order, off_set, limit):
         try:
             off_set = int(off_set)
             limit = int(limit)
@@ -1141,6 +1141,23 @@ class DbOperator(object):
                     room_condition = '%' + room_name + '%'
                     count_query = count_query.filter(Rooms.room_name.like(room_condition))
                     value_query = value_query.filter(Rooms.room_name.like(room_condition))
+                # 排序
+                if sort_column == "id":
+                    if desc_order == "0":
+                        value_query = value_query.order_by(Rooms.id.asc())
+                    else:
+                        value_query = value_query.order_by(Rooms.id.desc())
+                elif sort_column == "room":
+                    if desc_order == "0":
+                        value_query = value_query.order_by(Rooms.room_name.asc())
+                    else:
+                        value_query = value_query.order_by(Rooms.room_name.desc())
+                elif sort_column == "create_time":
+                    if desc_order == "0":
+                        value_query = value_query.order_by(Rooms.create_time.asc())
+                    else:
+                        value_query = value_query.order_by(Rooms.create_time.desc())
+                # 获取结果
                 count = count_query.count()
                 values = value_query[off_set: limit_count]
 

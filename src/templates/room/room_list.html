@@ -85,15 +85,21 @@ chosen-menu
 {% block body_content %}
 <table id="room_list_result" class="table table-striped table-bordered table-hover">
     <thead>
-    <tr>
-        <th style="text-align:center">ID</th>
-        <th style="text-align:center">客房名称</th>
+    <tr id="room_list_header" data-sort_column="id" data-desc_order="0">
+        <th style="text-align:center" class="pointer" data-column="id">ID
+            <span class="float_right glyphicon glyphicon-arrow-up btn-xs"></span>
+        </th>
+        <th style="text-align:center" class="pointer" data-column="room">客房名称
+            <span class="float_right glyphicon glyphicon-sort btn-xs"></span>
+        </th>
         <th style="text-align:center">客房密码</th>
         <th style="text-align:center">路由器账号</th>
         <th style="text-align:center">路由器密码</th>
         <th style="text-align:center">Wi-Fi名称</th>
         <th style="text-align:center">Wi-Fi密码</th>
-        <th style="text-align:center">添加时间</th>
+        <th style="text-align:center" class="pointer" data-column="create_time">添加时间
+            <span class="float_right glyphicon glyphicon-sort btn-xs"></span>
+        </th>
     </tr>
     </thead>
     <tbody>

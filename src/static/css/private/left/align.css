@@ -87,3 +87,16 @@
 .side_bar_normal_menu {
 
 }
+
+
+.float_right {
+    float: right;
+}
+
+.float_left {
+    float: left;
+}
+
+.pointer {
+    cursor: pointer;
+}
